@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import API from "../api"; // <<--- NEW IMPORT
 
 // --- HELPERS ---
 const getConfig = (isMultipart = false) => ({
@@ -14,7 +14,7 @@ export const registerUser = createAsyncThunk(
   "user/register",
   async (userData, { rejectWithValue }) => {
     try {
-      const { data } = await axios.post(
+      const { data } = await API.post(
         "/api/v1/register",
         userData,
         getConfig(true)
@@ -33,7 +33,7 @@ export const loginUser = createAsyncThunk(
   "user/login",
   async ({ email, password }, { rejectWithValue }) => {
     try {
-      const { data } = await axios.post(
+      const { data } = await API.post(
         "/api/v1/login",
         { email, password },
         getConfig()
@@ -50,7 +50,7 @@ export const loadUser = createAsyncThunk(
   "user/load",
   async (_, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get("/api/v1/me", getConfig());
+      const { data } = await API.get("/api/v1/me", getConfig());
       return data.user;
     } catch (error) {
       return rejectWithValue(
@@ -62,7 +62,7 @@ export const loadUser = createAsyncThunk(
 
 // 4. LOGOUT
 export const logoutUser = createAsyncThunk("user/logout", async () => {
-  await axios.get("/api/v1/logout", getConfig());
+  await API.get("/api/v1/logout", getConfig());
 });
 
 // 5. UPDATE PROFILE
@@ -70,7 +70,7 @@ export const updateProfile = createAsyncThunk(
   "user/updateProfile",
   async (userData, { rejectWithValue }) => {
     try {
-      const { data } = await axios.put(
+      const { data } = await API.put(
         "/api/v1/me/update",
         userData,
         getConfig(true)
@@ -87,7 +87,7 @@ export const updatePassword = createAsyncThunk(
   "user/updatePassword",
   async (passwords, { rejectWithValue }) => {
     try {
-      const { data } = await axios.put(
+      const { data } = await API.put(
         "/api/v1/password/update",
         passwords,
         getConfig()
@@ -108,7 +108,7 @@ export const forgotPassword = createAsyncThunk(
   "user/forgotPassword",
   async (email, { rejectWithValue }) => {
     try {
-      const { data } = await axios.post(
+      const { data } = await API.post(
         "/api/v1/password/forgot",
         { email },
         getConfig()
@@ -125,7 +125,7 @@ export const resetPassword = createAsyncThunk(
   "user/resetPassword",
   async ({ token, passwords }, { rejectWithValue }) => {
     try {
-      const { data } = await axios.put(
+      const { data } = await API.put(
         `/api/v1/password/reset/${token}`,
         passwords,
         getConfig()
@@ -142,7 +142,7 @@ export const myOrders = createAsyncThunk(
   "user/myOrders",
   async (_, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get("/api/v1/orders/me", getConfig());
+      const { data } = await API.get("/api/v1/orders/me", getConfig());
       return data.orders;
     } catch (error) {
       return rejectWithValue(
@@ -157,7 +157,7 @@ export const getOrderDetails = createAsyncThunk(
   "user/orderDetails",
   async (id, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get(`/api/v1/order/${id}`, getConfig());
+      const { data } = await API.get(`/api/v1/order/${id}`, getConfig());
       return data.order;
     } catch (error) {
       return rejectWithValue(
@@ -174,7 +174,7 @@ export const getAllUsers = createAsyncThunk(
   "user/getAllUsers",
   async (_, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get("/api/v1/admin/users", getConfig());
+      const { data } = await API.get("/api/v1/admin/users", getConfig());
       return data.users;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
@@ -187,7 +187,7 @@ export const deleteUser = createAsyncThunk(
   "user/deleteUser",
   async (id, { rejectWithValue }) => {
     try {
-      const { data } = await axios.delete(
+      const { data } = await API.delete(
         `/api/v1/admin/user/${id}`,
         getConfig()
       );
@@ -203,7 +203,7 @@ export const getUserDetails = createAsyncThunk(
   "admin/getUserDetails",
   async (id, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get(`/api/v1/admin/user/${id}`, getConfig());
+      const { data } = await API.get(`/api/v1/admin/user/${id}`, getConfig());
       return data.user;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
@@ -221,11 +221,10 @@ export const updateUser = createAsyncThunk(
         withCredentials: true,
       };
 
-      // Convert FormData back to object if necessary (since role update is simple JSON)
       const dataObj = {};
       userData.forEach((value, key) => (dataObj[key] = value));
 
-      const { data } = await axios.put(
+      const { data } = await API.put(
         `/api/v1/admin/user/${id}`,
         dataObj,
         config
@@ -251,7 +250,7 @@ const userSlice = createSlice({
     error: null,
     message: null,
     success: false,
-    isUpdated: false, // For Profile Update
+    isUpdated: false,
     orders: [],
     orderDetails: {},
   },
@@ -384,7 +383,7 @@ const userSlice = createSlice({
   },
 });
 
-// 2. PROFILE SLICE (Delete/Update User Admin Actions + Update Profile)
+// 2. PROFILE SLICE
 const profileSlice = createSlice({
   name: "profile",
   initialState: {
@@ -407,7 +406,6 @@ const profileSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // DELETE USER (Admin)
       .addCase(deleteUser.pending, (state) => {
         state.loading = true;
       })
@@ -420,8 +418,6 @@ const profileSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-
-      // UPDATE USER (Admin)
       .addCase(updateUser.pending, (state) => {
         state.loading = true;
       })
@@ -436,7 +432,7 @@ const profileSlice = createSlice({
   },
 });
 
-// 3. ALL USERS SLICE (Admin List)
+// 3. ALL USERS SLICE
 const allUsersSlice = createSlice({
   name: "allUsers",
   initialState: {
@@ -465,7 +461,7 @@ const allUsersSlice = createSlice({
   },
 });
 
-// 4. USER DETAILS SLICE (Admin: Single User for Edit)
+// 4. USER DETAILS SLICE
 const userDetailsSlice = createSlice({
   name: "userDetails",
   initialState: {
@@ -498,7 +494,8 @@ const userDetailsSlice = createSlice({
 export const { clearErrors, clearMessage, resetUpdate } = userSlice.actions;
 export const { resetProfile } = profileSlice.actions;
 export const { clearErrors: clearAllUsersErrors } = allUsersSlice.actions;
-export const { clearErrors: clearUserDetailsErrors } = userDetailsSlice.actions;
+export const { clearErrors: clearUserDetailsErrors } =
+  userDetailsSlice.actions;
 
 // Reducers Export
 export const userReducer = userSlice.reducer;

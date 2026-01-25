@@ -1,0 +1,507 @@
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+
+// --- HELPERS ---
+const getConfig = (isMultipart = false) => ({
+  headers: {
+    "Content-Type": isMultipart ? "multipart/form-data" : "application/json",
+  },
+  withCredentials: true,
+});
+
+// 1. REGISTER
+export const registerUser = createAsyncThunk(
+  "user/register",
+  async (userData, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post(
+        "/api/v1/register",
+        userData,
+        getConfig(true)
+      );
+      return data.user;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Registration Failed"
+      );
+    }
+  }
+);
+
+// 2. LOGIN
+export const loginUser = createAsyncThunk(
+  "user/login",
+  async ({ email, password }, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post(
+        "/api/v1/login",
+        { email, password },
+        getConfig()
+      );
+      return data.user;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Login Failed");
+    }
+  }
+);
+
+// 3. LOAD USER
+export const loadUser = createAsyncThunk(
+  "user/load",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get("/api/v1/me", getConfig());
+      return data.user;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Load User Failed"
+      );
+    }
+  }
+);
+
+// 4. LOGOUT
+export const logoutUser = createAsyncThunk("user/logout", async () => {
+  await axios.get("/api/v1/logout", getConfig());
+});
+
+// 5. UPDATE PROFILE
+export const updateProfile = createAsyncThunk(
+  "user/updateProfile",
+  async (userData, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.put(
+        "/api/v1/me/update",
+        userData,
+        getConfig(true)
+      );
+      return data.success;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Update Failed");
+    }
+  }
+);
+
+// 6. UPDATE PASSWORD
+export const updatePassword = createAsyncThunk(
+  "user/updatePassword",
+  async (passwords, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.put(
+        "/api/v1/password/update",
+        passwords,
+        getConfig()
+      );
+      return data.success;
+    } catch (error) {
+      const message =
+        error.response && error.response.data && error.response.data.message
+          ? error.response.data.message
+          : "Server not responding or Network Error";
+      return rejectWithValue(message);
+    }
+  }
+);
+
+// 7. FORGOT PASSWORD
+export const forgotPassword = createAsyncThunk(
+  "user/forgotPassword",
+  async (email, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post(
+        "/api/v1/password/forgot",
+        { email },
+        getConfig()
+      );
+      return data.message;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Request Failed");
+    }
+  }
+);
+
+// 8. RESET PASSWORD
+export const resetPassword = createAsyncThunk(
+  "user/resetPassword",
+  async ({ token, passwords }, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.put(
+        `/api/v1/password/reset/${token}`,
+        passwords,
+        getConfig()
+      );
+      return data.success;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Reset Failed");
+    }
+  }
+);
+
+// 9. MY ORDERS (User specific)
+export const myOrders = createAsyncThunk(
+  "user/myOrders",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get("/api/v1/orders/me", getConfig());
+      return data.orders;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Fetch Orders Failed"
+      );
+    }
+  }
+);
+
+// 10. ORDER DETAILS
+export const getOrderDetails = createAsyncThunk(
+  "user/orderDetails",
+  async (id, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(`/api/v1/order/${id}`, getConfig());
+      return data.order;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Fetch Order Details Failed"
+      );
+    }
+  }
+);
+
+// --- ADMIN ACTIONS ---
+
+// 11. GET ALL USERS (Admin)
+export const getAllUsers = createAsyncThunk(
+  "user/getAllUsers",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get("/api/v1/admin/users", getConfig());
+      return data.users;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+// 12. DELETE USER (Admin)
+export const deleteUser = createAsyncThunk(
+  "user/deleteUser",
+  async (id, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.delete(
+        `/api/v1/admin/user/${id}`,
+        getConfig()
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+// 13. GET USER DETAILS (Admin - For Update Page)
+export const getUserDetails = createAsyncThunk(
+  "admin/getUserDetails",
+  async (id, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(`/api/v1/admin/user/${id}`, getConfig());
+      return data.user;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+// 14. UPDATE USER (Admin)
+export const updateUser = createAsyncThunk(
+  "admin/updateUser",
+  async ({ id, userData }, { rejectWithValue }) => {
+    try {
+      const config = {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      };
+
+      // Convert FormData back to object if necessary (since role update is simple JSON)
+      const dataObj = {};
+      userData.forEach((value, key) => (dataObj[key] = value));
+
+      const { data } = await axios.put(
+        `/api/v1/admin/user/${id}`,
+        dataObj,
+        config
+      );
+      return data.success;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+// ---------------- SLICES ----------------
+
+// 1. MAIN USER SLICE (Auth & Basic)
+const userSlice = createSlice({
+  name: "user",
+  initialState: {
+    user: localStorage.getItem("user")
+      ? JSON.parse(localStorage.getItem("user"))
+      : {},
+    isAuthenticated: !!localStorage.getItem("user"),
+    loading: false,
+    error: null,
+    message: null,
+    success: false,
+    isUpdated: false, // For Profile Update
+    orders: [],
+    orderDetails: {},
+  },
+  reducers: {
+    clearErrors: (state) => {
+      state.error = null;
+    },
+    clearMessage: (state) => {
+      state.message = null;
+      state.success = false;
+    },
+    resetUpdate: (state) => {
+      state.isUpdated = false;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      // REGISTER
+      .addCase(registerUser.pending, (state) => {
+        state.loading = true;
+        state.isAuthenticated = false;
+      })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = true;
+        state.user = action.payload;
+        localStorage.setItem("user", JSON.stringify(action.payload));
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = false;
+        state.error = action.payload;
+      })
+
+      // LOGIN
+      .addCase(loginUser.pending, (state) => {
+        state.loading = true;
+        state.isAuthenticated = false;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = true;
+        state.user = action.payload;
+        localStorage.setItem("user", JSON.stringify(action.payload));
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = false;
+        state.error = action.payload;
+      })
+
+      // LOAD USER
+      .addCase(loadUser.pending, (state) => {
+        if (!state.isAuthenticated) state.loading = true;
+      })
+      .addCase(loadUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = true;
+        state.user = action.payload;
+        localStorage.setItem("user", JSON.stringify(action.payload));
+      })
+      .addCase(loadUser.rejected, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = false;
+        state.user = null;
+        state.error = action.payload;
+        localStorage.removeItem("user");
+      })
+
+      // LOGOUT
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.loading = false;
+        state.isAuthenticated = false;
+        state.user = null;
+        localStorage.removeItem("user");
+      })
+
+      // UPDATE PROFILE
+      .addCase(updateProfile.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isUpdated = action.payload;
+        state.message = "Profile Updated Successfully";
+      })
+      .addCase(updateProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // UPDATE PASSWORD
+      .addCase(updatePassword.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updatePassword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isUpdated = action.payload;
+        state.message = "Password Updated Successfully";
+      })
+      .addCase(updatePassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // ORDERS
+      .addCase(myOrders.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(myOrders.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orders = action.payload;
+      })
+      .addCase(myOrders.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(getOrderDetails.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getOrderDetails.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orderDetails = action.payload;
+      })
+      .addCase(getOrderDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+  },
+});
+
+// 2. PROFILE SLICE (Delete/Update User Admin Actions + Update Profile)
+const profileSlice = createSlice({
+  name: "profile",
+  initialState: {
+    loading: false,
+    isUpdated: false,
+    isDeleted: false,
+    message: null,
+    error: null,
+  },
+  reducers: {
+    resetProfile: (state) => {
+      state.isUpdated = false;
+      state.isDeleted = false;
+      state.message = null;
+      state.error = null;
+    },
+    clearErrors: (state) => {
+      state.error = null;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      // DELETE USER (Admin)
+      .addCase(deleteUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isDeleted = action.payload.success;
+        state.message = action.payload.message;
+      })
+      .addCase(deleteUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // UPDATE USER (Admin)
+      .addCase(updateUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isUpdated = action.payload;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+  },
+});
+
+// 3. ALL USERS SLICE (Admin List)
+const allUsersSlice = createSlice({
+  name: "allUsers",
+  initialState: {
+    users: [],
+    loading: false,
+    error: null,
+  },
+  reducers: {
+    clearErrors: (state) => {
+      state.error = null;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getAllUsers.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAllUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.users = action.payload;
+      })
+      .addCase(getAllUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+  },
+});
+
+// 4. USER DETAILS SLICE (Admin: Single User for Edit)
+const userDetailsSlice = createSlice({
+  name: "userDetails",
+  initialState: {
+    user: {},
+    loading: false,
+    error: null,
+  },
+  reducers: {
+    clearErrors: (state) => {
+      state.error = null;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getUserDetails.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getUserDetails.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(getUserDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+  },
+});
+
+// EXPORTS
+export const { clearErrors, clearMessage, resetUpdate } = userSlice.actions;
+export const { resetProfile } = profileSlice.actions;
+export const { clearErrors: clearAllUsersErrors } = allUsersSlice.actions;
+export const { clearErrors: clearUserDetailsErrors } = userDetailsSlice.actions;
+
+// Reducers Export
+export const userReducer = userSlice.reducer;
+export const profileReducer = profileSlice.reducer;
+export const allUsersReducer = allUsersSlice.reducer;
+export const userDetailsReducer = userDetailsSlice.reducer;

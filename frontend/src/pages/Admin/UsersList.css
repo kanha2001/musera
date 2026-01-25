@@ -1,0 +1,20 @@
+/* Purani "ProductList.css" wali styles hi apply hongi kyunki classes same hain */
+
+/* New Role Color */
+.blueColor {
+  color: #004085;
+  background-color: #cce5ff;
+}
+
+/* Ensure statusLabel class exists (agar OrderList.css alag tha to yahan add karein) */
+.statusLabel {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.greenColor {
+  color: #155724;
+  background-color: #d4edda;
+}

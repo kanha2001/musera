@@ -1,0 +1,190 @@
+/* Main Layout */
+.dashboard {
+  display: flex;
+  background-color: #f1f5f9; /* Soft background */
+  min-height: 100vh;
+}
+
+.productListContainer {
+  margin-left: 10px;
+  width: calc(100% - 250px);
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+/* --- HEADER SECTION --- */
+.productListHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 20px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  margin-bottom: 25px;
+}
+
+#productListHeading {
+  margin: 0;
+  color: #1e293b;
+  font-size: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Search Box */
+.searchBox {
+  display: flex;
+  align-items: center;
+  background-color: #f8fafc;
+  padding: 12px 20px;
+  border-radius: 50px; /* Rounded pill shape */
+  width: 350px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s;
+}
+
+.searchBox:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background-color: white;
+}
+
+.searchBox input {
+  border: none;
+  background: transparent;
+  outline: none;
+  margin-left: 10px;
+  width: 100%;
+  font-size: 14px;
+  color: #333;
+}
+
+/* --- TABLE SECTION --- */
+.productTableContainer {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  overflow: hidden; /* Rounded corners for table */
+  padding: 5px; /* Thoda padding taaki shadow na kate */
+}
+
+.productTable {
+  width: 100%;
+  border-collapse: separate; /* Allows spacing */
+  border-spacing: 0 10px; /* Row spacing */
+  min-width: 800px;
+}
+
+.productTable thead tr {
+  background-color: transparent;
+}
+
+.productTable th {
+  padding: 15px 20px;
+  text-align: left;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  border: none;
+}
+
+.productTable tbody tr {
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02); /* Subtle shadow per row */
+  transition: transform 0.2s;
+}
+
+.productTable tbody tr:hover {
+  transform: scale(1.005); /* Slight zoom effect */
+  background-color: #f8fafc;
+}
+
+.productTable td {
+  padding: 15px 20px;
+  color: #333;
+  font-size: 14px;
+  vertical-align: middle;
+  border-top: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.productTable td:first-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  border-left: 1px solid #f1f5f9;
+}
+
+.productTable td:last-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-right: 1px solid #f1f5f9;
+}
+
+/* Images */
+.productListImg {
+  width: 45px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.noImagePlaceholder {
+  width: 45px;
+  height: 45px;
+  background-color: #f1f5f9;
+  color: #94a3b8;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+/* Actions */
+.actionButtons {
+  display: flex;
+  gap: 12px;
+}
+
+.actionButtons a,
+.actionButtons button {
+  background: #f1f5f9;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actionButtons a:hover {
+  background: #e0f2fe; /* Light blue hover */
+}
+
+.actionButtons button:hover {
+  background: #fee2e2; /* Light red hover */
+}
+
+/* Responsive */
+@media screen and (max-width: 900px) {
+  .productListContainer {
+    margin-left: 0;
+    width: 100%;
+    padding: 15px;
+  }
+  .productListHeader {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+  .searchBox {
+    width: 100%;
+  }
+  .productTableContainer {
+    overflow-x: auto;
+  }
+}

@@ -1,0 +1,52 @@
+.promotion-bar {
+  width: 100%;
+  background: #111;
+  color: #fff;
+  height: 40px; /* Fixed height zaroori hai taaki jump na kare */
+  display: flex; /* Content center karne ke liye */
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* Bahar ka text chup jaye */
+  position: relative;
+  z-index: 1100;
+  font-family: "Ubuntu", sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+}
+
+.promo-text {
+  display: inline-block;
+  white-space: nowrap; /* Text line break nahi karega */
+}
+
+/* --- RIGHT SE AAYEGA (ENTER) --- */
+.promo-enter {
+  animation: slideInRight 0.5s ease-out forwards;
+}
+
+@keyframes slideInRight {
+  0% {
+    transform: translateX(100%); /* Right side se shuru */
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0); /* Center pe finish */
+    opacity: 1;
+  }
+}
+
+/* --- LEFT ME JAYEGA (EXIT) --- */
+.promo-exit {
+  animation: slideOutLeft 0.5s ease-in forwards;
+}
+
+@keyframes slideOutLeft {
+  0% {
+    transform: translateX(0); /* Center se shuru */
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-100%); /* Left side gayab */
+    opacity: 0;
+  }
+}

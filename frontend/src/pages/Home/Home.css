@@ -1,0 +1,379 @@
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
+
+/* GLOBAL RESET & SHELL */
+.home-shell {
+  min-height: 100vh;
+  background: #faf9f6;
+  font-family: "Ubuntu", sans-serif;
+  color: #333;
+  overflow-x: hidden;
+}
+
+/* HERO SLIDESHOW */
+.hero-slider-container {
+  position: relative;
+  height: 480px;
+  overflow: hidden;
+  background: #fdfcf8;
+}
+
+.hero-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1;
+}
+
+.hero-slide.active {
+  opacity: 1;
+  z-index: 2;
+}
+
+.hero-content {
+  padding-left: 6%;
+  z-index: 3;
+  max-width: 45%;
+}
+
+.hero-title {
+  font-size: clamp(28px, 4vw, 48px);
+  line-height: 1.2;
+  margin-bottom: 20px;
+  font-weight: 500;
+  color: #222;
+}
+
+.hero-link {
+  font-family: "Ubuntu", sans-serif;
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  color: #444;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+.hero-img {
+  height: 100%;
+  width: auto;
+  max-width: 60%;
+  object-fit: cover;
+  mask-image: linear-gradient(to left, black 50%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to left, black 50%, transparent 100%);
+}
+
+.hero-dots {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.2);
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.dot.active {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* TRI-CARDS */
+.tri-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  height: 320px;
+  gap: 10px;
+  margin: 10px;
+}
+
+.cat-card {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+}
+
+.cat-card-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+.cat-card img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+  z-index: 1;
+}
+
+.cat-card:hover img {
+  transform: scale(1.05);
+}
+
+.blue-tint::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(126, 154, 178, 0.3);
+  z-index: 2;
+  pointer-events: none;
+}
+.pink-tint::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(214, 166, 166, 0.25);
+  z-index: 2;
+  pointer-events: none;
+}
+.beige-tint::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(189, 173, 156, 0.25);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.cat-text {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+.cat-text h2 {
+  font-size: clamp(24px, 3vw, 36px);
+  letter-spacing: 0.1em;
+  margin-bottom: 14px;
+  font-weight: 500;
+}
+
+/* FAVORITES GRID */
+.grid-heading {
+  text-align: center;
+  font-size: 24px;
+  margin: 60px 0 30px;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+.fav-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 0 5% 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.grid-tile {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 6px;
+  overflow: hidden;
+  display: block;
+  text-decoration: none;
+}
+
+.blue-bg {
+  background: #b0c2cf;
+}
+.green-bg {
+  background: #9cad99;
+}
+.rust-bg {
+  background: #b56c52;
+}
+.green-light-bg {
+  background: #9faea3;
+}
+.brown-bg {
+  background: #967d69;
+}
+
+.grid-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tile-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding-bottom: 20px;
+  background: rgba(0, 0, 0, 0.15);
+  color: #fff;
+}
+
+.tile-overlay h3 {
+  font-size: 20px;
+  margin-bottom: 12px;
+  font-weight: 500;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .fav-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-slider-container {
+    height: auto;
+    min-height: 450px;
+  }
+  .hero-slide {
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+  }
+  .hero-img {
+    height: 55%;
+    width: 100%;
+    max-width: 100%;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+  .hero-content {
+    height: 45%;
+    padding: 20px;
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .tri-cards {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+  }
+  .cat-card {
+    height: 200px;
+    width: 100%;
+    margin: 0 0 4px 0;
+  }
+
+  .fav-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0 16px 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .fav-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* 🔥 TRUSTPILOT SECTION - ADD YE CSS */
+.trustpilot-section {
+  padding: 2rem 1.5rem;
+  background: white;
+  margin: 2rem 0;
+}
+
+.trustpilot-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem 0;
+}
+
+.trustpilot-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.trustpilot-stars {
+  color: #f39c12;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.trustpilot-stars span {
+  margin-right: 0.1rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.trustpilot-text h3 {
+  font-size: 1.3rem;
+  color: #2c3e50;
+  margin: 0 0 0.2rem 0;
+  font-weight: 700;
+}
+
+.trustpilot-text p {
+  color: #7f8c8d;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.trustpilot-link {
+  color: #e74c3c;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.3s ease;
+}
+
+.trustpilot-link:hover {
+  color: #c0392b;
+}
+
+/* Responsive Trustpilot */
+@media (max-width: 768px) {
+  .trustpilot-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .trustpilot-stars {
+    font-size: 1.5rem;
+  }
+
+  .trustpilot-text h3 {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .trustpilot-section {
+    padding: 1.5rem 1rem;
+    margin: 1.5rem 0;
+  }
+}

@@ -1,0 +1,308 @@
+/* 🔥 PERFECT MOBILE WIDTH NAVBAR - LOGO CENTERED */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  background: #faf9f6;
+  height: 56px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.icon-btn {
+  background: transparent !important;
+  border: none;
+  cursor: pointer;
+  color: #111;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  position: relative;
+}
+
+.icon-btn:hover {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+
+/* 🔥 PERFECT NOTIFICATION BADGE */
+.notification-badge {
+  position: absolute;
+  top: 0px;
+  right: 1px;
+  background: #e74c3c;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
+  pointer-events: none;
+  line-height: 1;
+}
+
+.navbar-logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%); /* 🔥 ALWAYS CENTER */
+  z-index: 10; /* 🔥 ABOVE EVERYTHING */
+  flex-shrink: 0;
+}
+
+.navbar-logo-link {
+  text-decoration: none;
+  color: #111;
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.search-input-container {
+  overflow: hidden;
+  width: 0;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.search-bar {
+  border: none;
+  border-bottom: 1px solid #333;
+  background: transparent;
+  padding: 4px 0;
+  color: #333;
+  outline: none;
+  font-size: 14px;
+  width: 100%;
+  font-family: "Ubuntu", sans-serif;
+}
+
+.search-dropdown,
+.search-suggestion,
+.search-see-all {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+  z-index: 1001;
+  margin-top: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.search-suggestion {
+  padding: 16px 20px;
+  font-size: 14px;
+  color: #6b7280;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.search-see-all {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.search-see-all:hover {
+  background: #f9fafb;
+}
+
+.search-form {
+  display: contents;
+}
+
+/* 🔥 DESKTOP (769px+) */
+@media (min-width: 769px) {
+  .navbar {
+    padding: 0 20px;
+    height: 64px;
+  }
+
+  .icon-btn {
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+  }
+
+  .navbar-logo-link {
+    font-size: 32px;
+  }
+
+  .search-input-container {
+    width: 160px;
+    opacity: 1;
+    margin-right: 12px;
+  }
+
+  .search-toggle {
+    display: none;
+  }
+
+  .navbar-right {
+    gap: 12px;
+  }
+}
+
+/* 🔥 TABLET (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  .navbar {
+    padding: 0 16px;
+    height: 60px;
+  }
+
+  .navbar-logo-link {
+    font-size: 26px;
+  }
+
+  .navbar-right {
+    gap: 6px;
+  }
+}
+
+/* 🔥 MOBILE PERFECT WIDTH (0-480px) - LOGO CENTERED */
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0 8px;
+    height: 54px;
+  }
+
+  .icon-btn {
+    width: 34px;
+    height: 34px;
+    padding: 5px;
+  }
+
+  .notification-badge {
+    top: 1px;
+    right: 1px;
+    min-width: 14px;
+    height: 14px;
+    font-size: 8px;
+  }
+
+  /* 🔥 MOBILE LOGO STILL CENTERED */
+  .navbar-logo {
+    position: absolute; /* 🔥 KEEP CENTERED */
+    left: 40%;
+    transform: translateX(-40%);
+    z-index: 10;
+    flex-shrink: 0;
+  }
+
+  .navbar-logo-link {
+    font-size: 23px;
+    letter-spacing: 0.02em;
+  }
+
+  .navbar-right {
+    gap: 2px;
+    padding-right: 2px;
+  }
+
+  /* 🔥 MOBILE SEARCH - HIDE LOGO WHEN ACTIVE */
+  .search-wrapper.active {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100%;
+    background: #faf9f6;
+    z-index: 20; /* 🔥 ABOVE LOGO */
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+  }
+
+  .search-wrapper.active .search-input-container {
+    flex: 1;
+    width: calc(100% - 44px);
+    opacity: 1;
+  }
+
+  .search-wrapper.active .search-bar {
+    font-size: 16px;
+    padding: 8px 0;
+  }
+
+  /* 🔥 HIDE LOGO ONLY WHEN SEARCH ACTIVE */
+  .search-wrapper.active ~ .navbar-logo,
+  .logo-hidden {
+    display: none !important;
+  }
+
+  .hide-on-mobile {
+    display: none !important;
+  }
+}
+
+/* 🔥 ULTRA SMALL PHONES (320px - 360px) */
+@media (max-width: 360px) {
+  .navbar {
+    padding: 0 6px;
+    height: 52px;
+  }
+
+  .navbar-logo-link {
+    font-size: 23px;
+  }
+
+  .icon-btn {
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+  }
+}
+
+/* 🔥 SEARCH DROPDOWN MOBILE */
+@media (max-width: 480px) {
+  .search-dropdown {
+    position: fixed;
+    top: 54px;
+    left: 0;
+    right: 0;
+    border-radius: 0;
+    max-height: calc(100vh - 54px);
+  }
+}

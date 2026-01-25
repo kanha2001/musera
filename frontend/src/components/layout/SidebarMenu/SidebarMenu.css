@@ -1,0 +1,219 @@
+/* dark overlay behind panel */
+.ms-side-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0); /* start transparent */
+  z-index: 1100;
+  display: flex;
+  justify-content: flex-start;
+  animation: ms-overlay-fade-in 0.25s forwards;
+}
+
+.ms-menu-link-wrapper {
+  display: block;
+  text-decoration: none;
+}
+
+/* white panel */
+.ms-side-panel {
+  width: 360px;
+  max-width: 86%;
+  background: #faf9f6; /* warm off-white */
+  height: 100%; /* Height fix */
+  padding: 18px 20px 20px 20px;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-100%); /* hidden from left */
+  animation: ms-panel-slide-in 0.28s ease-out forwards;
+
+  /* Font Family Match */
+  font-family: "Ubuntu", sans-serif;
+}
+
+/* top row */
+.ms-side-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+/* user pill */
+.ms-user-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 999px;
+  padding: 6px 16px;
+  border: 1px solid #e3e3e3;
+  background: white;
+  font-size: 13px;
+  cursor: pointer;
+  color: #333;
+  font-family: "Ubuntu", sans-serif;
+}
+
+.ms-user-pill-link {
+  text-decoration: none;
+}
+
+/* close button */
+.ms-close-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #333;
+}
+
+/* main menu stack */
+.ms-side-menu {
+  margin-top: 10px;
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 16px;
+  border-top: 1px solid #e5e5e5;
+}
+
+.ms-menu-item {
+  width: 100%;
+  padding: 16px 0;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  color: #111;
+  font-weight: 500;
+  font-family: "Ubuntu", sans-serif;
+}
+
+/* item with arrow (like SHOP) */
+.ms-menu-item.has-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* arrow icon */
+.arrow {
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s;
+  color: #666;
+}
+
+.arrow.up {
+  transform: rotate(180deg);
+}
+
+/* first-level submenu */
+.ms-submenu {
+  padding: 4px 0 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: rgba(0, 0, 0, 0.02); /* Slight contrast */
+}
+
+.ms-sub-item {
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: #444;
+  font-family: "Ubuntu", sans-serif;
+}
+
+.ms-sub-item:hover {
+  color: #e16e50; /* Accent color on hover */
+}
+
+/* second-level submenu group */
+.ms-sub-group {
+  padding-top: 4px;
+}
+
+.ms-sub-item.has-arrow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 14px;
+}
+
+.ms-sub-submenu {
+  padding: 2px 0 6px 26px;
+}
+
+.ms-sub-sub-item {
+  width: 100%;
+  padding: 8px 0;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: "Ubuntu", sans-serif;
+}
+
+.ms-sub-sub-item:hover {
+  color: #e16e50;
+}
+
+/* social icons row bottom */
+.ms-side-social {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5 icons */
+  border-top: 1px solid #e5e5e5;
+  margin-top: auto;
+}
+
+.ms-side-social button {
+  border: none;
+  border-right: 1px solid #f0f0f0;
+  background: #ffffff;
+  padding: 16px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #555;
+  transition: color 0.3s;
+}
+
+.ms-side-social button:last-child {
+  border-right: none;
+}
+
+.ms-side-social button:hover {
+  color: #e16e50;
+}
+
+/* ---- ANIMATIONS ---- */
+@keyframes ms-panel-slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes ms-overlay-fade-in {
+  from {
+    background: rgba(0, 0, 0, 0);
+  }
+  to {
+    background: rgba(0, 0, 0, 0.45);
+  }
+}

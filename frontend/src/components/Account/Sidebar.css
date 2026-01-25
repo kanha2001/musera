@@ -1,0 +1,133 @@
+/* Container */
+.sidebar-container {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  width: 100%;
+  height: fit-content;
+  border: 1px solid #eee;
+}
+
+/* User Header */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding-bottom: 20px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.sidebar-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #f3f3f3;
+}
+
+.sidebar-user-details h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+}
+
+.sidebar-user-details p {
+  font-size: 13px;
+  color: #777;
+  margin: 2px 0 0;
+}
+
+/* Menu Links */
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 15px;
+  color: #555;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.link-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-link:hover,
+.sidebar-link.active {
+  background: #f9f9f9;
+  color: #000;
+  font-weight: 600;
+}
+
+.mobile-arrow {
+  display: none; /* Desktop par arrow nahi dikhega */
+}
+
+.mobile-only-menu {
+  display: none; /* Desktop par extra links nahi dikhenge */
+}
+
+/* Logout Specific */
+.logout-btn {
+  margin-top: 10px;
+  color: #ff4b4b !important;
+}
+.logout-btn:hover {
+  background: #fff0f0 !important;
+}
+
+/* --- MOBILE RESPONSIVE --- */
+@media (max-width: 768px) {
+  .sidebar-container {
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+    background: transparent;
+  }
+
+  .sidebar-header {
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-bottom: none;
+  }
+
+  .sidebar-menu {
+    background: #fff;
+    padding: 0;
+    gap: 0;
+    margin-bottom: 15px; /* Separation between sections */
+  }
+
+  .sidebar-link {
+    padding: 18px 20px;
+    border-bottom: 1px solid #f7f7f7;
+    border-radius: 0;
+    font-size: 15px;
+  }
+
+  .mobile-arrow {
+    display: block; /* Mobile par arrow dikhega */
+    color: #ccc;
+  }
+
+  .mobile-only-menu {
+    display: flex; /* Mobile par Terms, Privacy dikhenge */
+  }
+}

@@ -1,0 +1,71 @@
+.payment-container {
+  width: 100vw;
+  max-width: 100%;
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.payment-box {
+  background-color: white;
+  width: 100%;
+  max-width: 450px;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.payment-heading {
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: 600;
+  border-bottom: 2px solid #000;
+  width: 50%;
+  margin: 0 auto 30px auto;
+  padding-bottom: 5px;
+}
+
+.payment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.payment-input-group {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  padding: 12px;
+  border-radius: 5px;
+}
+.payment-input-group svg {
+  color: #555;
+  margin-right: 15px;
+}
+
+/* Stripe Elements Class */
+.paymentInput {
+  width: 100%;
+}
+
+.pay-btn {
+  background-color: #000;
+  color: white;
+  border: none;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+.pay-btn:hover {
+  background-color: #333;
+}
+.pay-btn:disabled {
+  background-color: #888;
+  cursor: not-allowed;
+}

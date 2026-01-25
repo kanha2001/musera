@@ -1,0 +1,246 @@
+/* GLOBAL FOOTER VARIABLES */
+:root {
+  --ft-bg: #faf9f6;
+  --ft-text: #555;
+  --ft-heading: #111;
+  --ft-border: rgba(0, 0, 0, 0.08);
+  --ft-accent: #e16e50; /* Warm Accent Color */
+}
+
+.ft-wrapper {
+  background: var(--ft-bg);
+  color: var(--ft-text);
+  /* Use Ubuntu as requested */
+  font-family: "Ubuntu", sans-serif;
+  padding: 80px 24px 40px;
+  border-top: 1px solid var(--ft-border);
+  margin-top: auto; /* Footer ko bottom push karne ke liye zaroori hai */
+}
+
+.ft-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* --- TOP SECTION --- */
+.ft-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 40px;
+  margin-bottom: 50px;
+}
+
+.ft-brand {
+  max-width: 350px;
+}
+
+.ft-logo-link {
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 16px;
+}
+
+.ft-logo-text {
+  font-family: "Ubuntu", sans-serif;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: var(--ft-heading);
+}
+
+.ft-mission {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ft-text);
+}
+
+/* Newsletter Input */
+.ft-newsletter {
+  max-width: 400px;
+  width: 100%;
+}
+
+.ft-input-group {
+  display: flex;
+  position: relative;
+  margin-top: 12px;
+  border-bottom: 1px solid #333;
+}
+
+.ft-input-group input {
+  width: 100%;
+  padding: 12px 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--ft-heading);
+  font-size: 15px;
+  font-family: "Ubuntu", sans-serif; /* Explicit font inheritance */
+}
+
+.ft-input-group input::placeholder {
+  color: #999;
+}
+
+.ft-arrow-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--ft-heading);
+  transition: transform 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.ft-arrow-btn:hover {
+  transform: translateX(5px);
+  color: var(--ft-accent);
+}
+
+.ft-subtext {
+  font-size: 12px;
+  margin-top: 8px;
+  color: #888;
+}
+
+/* --- DIVIDER --- */
+.ft-divider {
+  height: 1px;
+  background: var(--ft-border);
+  margin: 0 0 50px 0;
+}
+
+/* --- LINKS GRID --- */
+.ft-links-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+}
+
+.ft-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ft-heading {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ft-heading);
+  margin-bottom: 10px;
+}
+
+.ft-col a {
+  text-decoration: none;
+  color: var(--ft-text);
+  font-size: 14px;
+  transition: all 0.2s ease;
+  position: relative;
+  width: fit-content;
+}
+
+.ft-col a:hover {
+  color: var(--ft-heading);
+  transform: translateX(4px);
+}
+
+.ft-highlight {
+  color: var(--ft-accent) !important;
+  font-weight: 600;
+}
+
+/* Contact Specific */
+.ft-address {
+  font-size: 14px;
+  line-height: 1.6;
+  font-style: normal;
+  color: var(--ft-text);
+}
+
+.ft-email {
+  font-weight: 500;
+  color: var(--ft-heading) !important;
+}
+
+/* Social Icons */
+.ft-socials {
+  display: flex;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.ft-socials a {
+  color: var(--ft-heading);
+  transition: transform 0.2s, color 0.2s;
+  display: flex; /* Centers SVG icon */
+}
+
+.ft-socials a:hover {
+  transform: translateY(-3px);
+  color: var(--ft-accent);
+}
+
+/* --- BOTTOM BAR --- */
+.ft-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 50px;
+  font-size: 12px;
+  color: #999;
+}
+
+.ft-payments {
+  display: flex;
+  gap: 12px;
+}
+
+.pay-icon {
+  border: 1px solid #ddd;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  color: #555;
+  letter-spacing: 0.05em;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 1024px) {
+  .ft-links-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 60px 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ft-wrapper {
+    padding: 60px 20px 30px;
+  }
+
+  .ft-top {
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .ft-newsletter {
+    max-width: 100%;
+  }
+
+  .ft-links-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .ft-bottom {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+  }
+}

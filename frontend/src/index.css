@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  scroll-behavior: auto !important; /* 🔥 No smooth scroll on page change */
+}
+
+html {
+  scroll-behavior: smooth; /* Internal smooth scroll allowed */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Ubuntu", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #faf9f6;
+  min-height: 100vh;
+  scroll-behavior: auto !important; /* 🔥 Page load पर instant top */
+  position: relative;
+  overflow-x: hidden;
+}
+
+#root {
+  scroll-behavior: auto !important;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* 🔥 Multiple scroll targets override */
+body,
+html,
+#root,
+[data-router-wrapper] {
+  scroll-behavior: auto !important;
+  scroll-margin-top: 0 !important;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: "Ubuntu", sans-serif;
+}
+
+/* --- CUSTOM TOASTIFY STYLES --- */

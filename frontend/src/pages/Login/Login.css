@@ -1,0 +1,418 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Ubuntu", sans-serif;
+  overflow-x: hidden;
+}
+
+/* 🔥 CREAM COLOUR GRADIENT BACKGROUND */
+.login-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    #fffdf5 0%,
+    #fdfaf4 25%,
+    #f8f4ed 50%,
+    #f5f1ea 75%,
+    #efe8dc 100%
+  );
+  position: relative;
+  overflow: hidden;
+}
+
+/* 🔥 RESPONSIVE FLOATING ANIMATIONS */
+.floating-dress {
+  position: absolute;
+  width: 60px; /* 🔥 Smaller on mobile */
+  height: 75px;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 100"><path fill="%23D4A574" opacity="0.15" d="M20 10 Q40 0 60 10 L60 80 Q50 90 40 85 Q30 90 20 80 Z"/></svg>');
+  top: 15%;
+  left: 5%;
+  animation: float 6s ease-in-out infinite;
+}
+
+.floating-toy1 {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle, #d4a574, #e8c69a);
+  border-radius: 50% 20% 50% 20%;
+  box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+  top: 70%;
+  right: 10%;
+  animation: float 8s ease-in-out infinite reverse;
+}
+
+.floating-toy2 {
+  position: absolute;
+  width: 35px;
+  height: 50px;
+  background: linear-gradient(45deg, #e8c69a, #d4a574);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  box-shadow: 0 4px 12px rgba(232, 198, 154, 0.4);
+  top: 5%;
+  right: 15%;
+  animation: float 7s ease-in-out infinite 2s;
+}
+
+.floating-toy3 {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background: conic-gradient(from 0deg, #d4a574, #e8c69a, #f5e6cc, #d4a574);
+  border-radius: 50%;
+  box-shadow: 0 6px 20px rgba(212, 165, 116, 0.3);
+  bottom: 15%;
+  left: 15%;
+  animation: float 9s ease-in-out infinite 4s;
+}
+
+/* 🔥 FLOATING ANIMATION */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(3deg);
+  } /* 🔥 Smaller float on mobile */
+}
+
+/* 🔥 MAIN CONTAINER */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem; /* 🔥 Reduced padding */
+  position: relative;
+  z-index: 10;
+}
+
+/* 🔥 CREAM GLASS MORPHISM CARD */
+.login-card {
+  background: rgba(255, 255, 255, 0.9); /* 🔥 More solid */
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(239, 232, 220, 0.9);
+  border-radius: 24px;
+  padding: 2.5rem 2rem; /* 🔥 Adjusted padding */
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 25px 45px rgba(212, 165, 116, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.9);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #d4a574, #e8c69a, #f5e6cc, #d4a574);
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 2px 10px rgba(212, 165, 116, 0.3);
+}
+
+/* 🔥 HEADER */
+.login-header {
+  text-align: center;
+  margin-bottom: 1.8rem; /* 🔥 Slightly reduced */
+}
+
+.logo-circle {
+  width: 70px; /* 🔥 Slightly smaller */
+  height: 70px;
+  background: linear-gradient(135deg, #e8c69a, #f5e6cc);
+  border: 3px solid rgba(212, 165, 116, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.2rem;
+  box-shadow: 0 12px 30px rgba(212, 165, 116, 0.4),
+    inset 0 2px 4px rgba(255, 255, 255, 0.8);
+  animation: pulse 2s infinite;
+}
+
+.logo-text {
+  font-size: 1.8rem; /* 🔥 Smaller */
+  animation: bounce 2s infinite;
+}
+
+.login-header h2 {
+  background: linear-gradient(135deg, #8b6f47, #d4a574);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 1.8rem; /* 🔥 Smaller on mobile */
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.login-header p {
+  color: #8b6f47;
+  font-size: 0.95rem; /* 🔥 Smaller */
+  font-weight: 500;
+  margin: 0;
+}
+
+/* 🔥 INPUT FIELDS */
+.input-wrapper {
+  margin-bottom: 1.3rem; /* 🔥 Reduced */
+}
+
+.input-field {
+  position: relative;
+}
+
+.input-field input {
+  width: 100%;
+  padding: 15px 18px 15px 48px; /* 🔥 Adjusted padding */
+  border: 2px solid rgba(212, 165, 116, 0.3);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  font-size: 0.95rem; /* 🔥 Smaller font */
+  color: #5a4a3a;
+  transition: all 0.3s ease;
+  outline: none;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.input-field input::placeholder {
+  color: #d4a574;
+}
+
+.input-field input:focus {
+  border-color: #d4a574;
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.15),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px); /* 🔥 Less lift */
+}
+
+.input-icon {
+  position: absolute;
+  left: 16px; /* 🔥 Adjusted */
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.1rem; /* 🔥 Smaller */
+  color: #d4a574;
+}
+
+/* 🔥 CREAM GOLD BUTTON */
+.login-button {
+  width: 100%;
+  padding: 15px; /* 🔥 Slightly smaller */
+  background: linear-gradient(135deg, #d4a574 0%, #e8c69a 50%, #f5e6cc 100%);
+  color: #5a4a3a;
+  border: 2px solid rgba(212, 165, 116, 0.3);
+  border-radius: 16px;
+  font-size: 1rem; /* 🔥 Perfect mobile size */
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  margin-top: 0.8rem;
+  box-shadow: 0 8px 25px rgba(212, 165, 116, 0.3);
+  min-height: 52px; /* 🔥 Touch target */
+}
+
+.login-button:hover {
+  transform: translateY(-2px); /* 🔥 Less lift */
+  box-shadow: 0 15px 35px rgba(212, 165, 116, 0.4);
+  background: linear-gradient(135deg, #e8c69a 0%, #f5e6cc 50%, #d4a574 100%);
+}
+
+.login-button:active {
+  transform: translateY(0);
+}
+
+.login-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  background: #e8c69a;
+}
+
+.loading-spinner {
+  width: 22px;
+  height: 22px;
+  border: 3px solid rgba(212, 165, 116, 0.3);
+  border-top: 3px solid #d4a574;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+/* 🔥 LINKS */
+.forgot-password {
+  display: inline-block;
+  color: #8b6f47;
+  text-decoration: none;
+  font-size: 0.9rem; /* 🔥 Smaller */
+  font-weight: 500;
+  margin-bottom: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.forgot-password:hover {
+  color: #d4a574;
+  text-shadow: 0 2px 4px rgba(212, 165, 116, 0.3);
+}
+
+.signup-prompt {
+  margin-top: 1.8rem;
+  padding-top: 1.8rem;
+  border-top: 1px solid rgba(212, 165, 116, 0.2);
+}
+
+.signup-prompt p {
+  color: #8b6f47;
+  font-size: 0.9rem; /* 🔥 Smaller */
+  font-weight: 500;
+}
+
+.signup-link {
+  color: #d4a574;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.signup-link:hover {
+  text-shadow: 0 2px 8px rgba(212, 165, 116, 0.5);
+}
+
+/* 🔥 ANIMATIONS */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 12px 30px rgba(212, 165, 116, 0.4);
+  }
+  50% {
+    box-shadow: 0 12px 30px rgba(212, 165, 116, 0.7);
+  }
+  100% {
+    box-shadow: 0 12px 30px rgba(212, 165, 116, 0.4);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* 🔥 🔥 PERFECT MOBILE RESPONSIVE 🔥 🔥 */
+@media (max-width: 480px) {
+  .login-container {
+    padding: 0.5rem;
+    min-height: 100vh;
+  }
+
+  .login-card {
+    margin: 0.5rem; /* 🔥 Perfect spacing */
+    padding: 1.8rem 1.5rem; /* 🔥 Mobile optimized */
+    border-radius: 20px; /* 🔥 Slightly smaller radius */
+    max-width: none; /* 🔥 Full width */
+    width: calc(100% - 1rem);
+  }
+
+  .logo-circle {
+    width: 60px;
+    height: 60px;
+  }
+
+  .logo-text {
+    font-size: 1.6rem;
+  }
+
+  .login-header h2 {
+    font-size: 1.5rem; /* 🔥 Perfect mobile size */
+    margin-bottom: 0.3rem;
+  }
+
+  .login-header p {
+    font-size: 0.9rem;
+    padding: 0 0.5rem;
+  }
+
+  .input-field input {
+    padding: 14px 16px 14px 45px; /* 🔥 Thumb friendly */
+    font-size: 0.95rem;
+    min-height: 48px; /* 🔥 Touch target */
+  }
+
+  .input-icon {
+    left: 14px;
+    font-size: 1rem;
+  }
+
+  .login-button {
+    padding: 14px;
+    font-size: 1rem;
+    min-height: 50px; /* 🔥 Perfect touch target */
+    margin-top: 0.5rem;
+  }
+
+  .forgot-password {
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .signup-prompt {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+  }
+
+  .signup-prompt p {
+    font-size: 0.85rem;
+  }
+
+  /* 🔥 Hide some floating elements on very small screens */
+  @media (max-width: 360px) {
+    .floating-toy2,
+    .floating-toy3 {
+      display: none;
+    }
+  }
+}
+
+/* 🔥 Landscape Mobile Fix */
+@media (max-height: 500px) and (orientation: landscape) {
+  .login-container {
+    padding: 1rem;
+  }
+
+  .login-card {
+    padding: 1.5rem;
+    margin: 0.5rem;
+  }
+}

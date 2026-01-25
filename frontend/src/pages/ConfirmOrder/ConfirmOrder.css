@@ -1,0 +1,127 @@
+.confirm-order-page {
+  width: 100vw;
+  max-width: 100%;
+  min-height: 90vh;
+  background-color: #fff;
+  padding: 20px 0;
+}
+
+.confirm-order-container {
+  display: grid;
+  grid-template-columns: 6fr 3fr;
+  gap: 40px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Left Side */
+.confirm-heading {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.confirm-box {
+  margin-bottom: 40px;
+  padding-left: 10px;
+}
+.confirm-row {
+  margin: 10px 0;
+  display: flex;
+  gap: 10px;
+  color: #555;
+}
+.confirm-row b {
+  color: #000;
+}
+
+.confirm-cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.confirm-item-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+.confirm-item-card img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+.confirm-item-card a {
+  color: #555;
+  text-decoration: none;
+  width: 50%;
+  font-weight: 500;
+}
+.confirm-item-card span {
+  font-family: "Ubuntu", sans-serif;
+  color: #333;
+}
+
+/* Right Side (Summary) */
+.order-summary {
+  border-left: 1px solid #ddd;
+  padding-left: 40px;
+}
+.summary-heading {
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.summary-box {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px;
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+.payment-btn {
+  width: 100%;
+  background-color: #000;
+  color: white;
+  border: none;
+  padding: 15px;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: 0.3s;
+}
+.payment-btn:hover {
+  background-color: #333;
+}
+
+@media (max-width: 768px) {
+  .confirm-order-container {
+    grid-template-columns: 1fr;
+    border-left: none;
+  }
+  .order-summary {
+    border-left: none;
+    padding-left: 0;
+    margin-top: 40px;
+  }
+}

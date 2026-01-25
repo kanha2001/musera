@@ -1,0 +1,56 @@
+/* Import ProductList styles logic internally via CSS copy-paste 
+   Agar aap chahein to "ProductList.css" ko hi import kar sakte hain 
+   lekin separate file safe rehti hai */
+
+/* --- Copy content from ProductList.css here (Or keep generic classes) --- */
+/* Main Layout reuse ho raha hai (dashboard, productListContainer etc.) */
+
+/* STATUS COLORS */
+.statusLabel {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.greenColor {
+  color: #155724;
+  background-color: #d4edda;
+}
+
+.redColor {
+  color: #721c24;
+  background-color: #f8d7da;
+}
+
+/* Table styling same as ProductList */
+.productTableContainer {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  padding: 5px;
+}
+.productTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+}
+.productTable th {
+  padding: 15px 20px;
+  text-align: left;
+  color: #64748b;
+  font-weight: 600;
+}
+.productTable tbody tr {
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+}
+.productTable td {
+  padding: 15px 20px;
+  color: #333;
+}
+.actionButtons {
+  display: flex;
+  gap: 12px;
+}

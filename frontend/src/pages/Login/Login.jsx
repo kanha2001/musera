@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser, clearErrors } from "../../features/userSlice";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./Login.css";
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { isAuthenticated, error, loading } = useSelector(
     (state) => state.user
@@ -15,25 +16,36 @@ const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  // login-submit se hi success toast dikhane ke liye
+  const [justSubmitted, setJustSubmitted] = useState(false);
+
+  const redirect = location.search ? location.search.split("=")[1] : "/";
 
   const loginSubmit = (e) => {
     e.preventDefault();
+    setJustSubmitted(true);
     dispatch(loginUser({ email, password }));
   };
 
+  // sirf error handle karo
   useEffect(() => {
     if (error) {
       if (error !== "Please Login to access this resource") {
         toast.error(error);
       }
       dispatch(clearErrors());
+      setJustSubmitted(false);
     }
+  }, [error, dispatch]);
 
-    if (isAuthenticated) {
+  // success handling: sirf jab abhi form submit kiya ho
+  useEffect(() => {
+    if (isAuthenticated && justSubmitted) {
       toast.success("Logged In Successfully");
-      navigate("/");
+      navigate(redirect);
+      setJustSubmitted(false);
     }
-  }, [dispatch, error, isAuthenticated, navigate]);
+  }, [isAuthenticated, justSubmitted, navigate, redirect]);
 
   return (
     <div className="login-wrapper">
@@ -93,7 +105,7 @@ const Login = () => {
             </button>
           </form>
 
-          <div class="signup-prompt">
+          <div className="signup-prompt">
             <p>
               New to Musera?{" "}
               <Link to="/register" className="signup-link">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser, clearErrors } from "../../features/userSlice";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./Register.css";
 
@@ -11,6 +11,7 @@ import defaultAvatar from "../../assets/Profile.png";
 const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { isAuthenticated, error, loading } = useSelector(
     (state) => state.user
@@ -28,6 +29,10 @@ const Register = () => {
   const [avatar, setAvatar] = useState(defaultAvatar);
   const [avatarPreview, setAvatarPreview] = useState(defaultAvatar);
 
+  const [justSubmitted, setJustSubmitted] = useState(false);
+
+  const redirect = location.search ? location.search.split("=")[1] : "/";
+
   const registerSubmit = (e) => {
     e.preventDefault();
 
@@ -37,6 +42,7 @@ const Register = () => {
     myForm.set("password", password);
     myForm.set("avatar", avatar);
 
+    setJustSubmitted(true);
     dispatch(registerUser(myForm));
   };
 
@@ -50,7 +56,6 @@ const Register = () => {
           setAvatar(reader.result);
         }
       };
-      // Check if file exists to prevent error
       if (e.target.files[0]) {
         reader.readAsDataURL(e.target.files[0]);
       }
@@ -59,17 +64,23 @@ const Register = () => {
     }
   };
 
+  // error only
   useEffect(() => {
     if (error) {
       toast.error(error);
       dispatch(clearErrors());
+      setJustSubmitted(false);
     }
+  }, [error, dispatch]);
 
-    if (isAuthenticated) {
+  // success only when form submitted
+  useEffect(() => {
+    if (isAuthenticated && justSubmitted) {
       toast.success("Account Created Successfully");
-      navigate("/");
+      navigate(redirect);
+      setJustSubmitted(false);
     }
-  }, [dispatch, error, isAuthenticated, navigate]);
+  }, [isAuthenticated, justSubmitted, navigate, redirect]);
 
   return (
     <div className="register-wrapper">

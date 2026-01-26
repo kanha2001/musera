@@ -24,7 +24,18 @@ const Login = () => {
   const loginSubmit = (e) => {
     e.preventDefault();
     setJustSubmitted(true);
-    dispatch(loginUser({ email, password }));
+
+    dispatch(loginUser({ email, password }))
+      .unwrap()
+      .then(() => {
+        // success ka navigate नीचे effect me handle hoga
+      })
+      .catch(() => {
+        // error ka toast नीचे effect me handle hoga
+      })
+      .finally(() => {
+        setJustSubmitted(false);
+      });
   };
 
   // sirf error handle karo
@@ -34,7 +45,6 @@ const Login = () => {
         toast.error(error);
       }
       dispatch(clearErrors());
-      setJustSubmitted(false);
     }
   }, [error, dispatch]);
 
@@ -43,7 +53,6 @@ const Login = () => {
     if (isAuthenticated && justSubmitted) {
       toast.success("Logged In Successfully");
       navigate(redirect);
-      setJustSubmitted(false);
     }
   }, [isAuthenticated, justSubmitted, navigate, redirect]);
 

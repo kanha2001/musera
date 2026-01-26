@@ -43,7 +43,19 @@ const Register = () => {
     myForm.set("avatar", avatar);
 
     setJustSubmitted(true);
-    dispatch(registerUser(myForm));
+
+    // thunk promise ka use karke flag reset karo
+    dispatch(registerUser(myForm))
+      .unwrap()
+      .then(() => {
+        // success handle effect me hoga
+      })
+      .catch(() => {
+        // error effect me toast karega
+      })
+      .finally(() => {
+        setJustSubmitted(false);
+      });
   };
 
   const registerDataChange = (e) => {
@@ -64,12 +76,11 @@ const Register = () => {
     }
   };
 
-  // error only
+  // error only (yahan setJustSubmitted nahi chhedna)
   useEffect(() => {
     if (error) {
       toast.error(error);
       dispatch(clearErrors());
-      setJustSubmitted(false);
     }
   }, [error, dispatch]);
 
@@ -78,7 +89,6 @@ const Register = () => {
     if (isAuthenticated && justSubmitted) {
       toast.success("Account Created Successfully");
       navigate(redirect);
-      setJustSubmitted(false);
     }
   }, [isAuthenticated, justSubmitted, navigate, redirect]);
 

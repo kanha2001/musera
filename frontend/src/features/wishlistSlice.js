@@ -1,18 +1,16 @@
+// src/features/wishlistSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import API from "../api";
 
 // 1. Toggle Wishlist (Add/Remove)
 export const toggleWishlist = createAsyncThunk(
   "wishlist/toggle",
   async (productData, { rejectWithValue }) => {
     try {
-      const config = { headers: { "Content-Type": "application/json" } };
-      // productData = { productId, name, price, image }
-      const { data } = await axios.post(
-        "/api/v1/wishlist",
-        productData,
-        config
-      );
+      const { data } = await API.post("/api/v1/wishlist", productData, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
       return data;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
@@ -25,8 +23,10 @@ export const getMyWishlist = createAsyncThunk(
   "wishlist/get",
   async (_, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get("/api/v1/wishlist");
-      return data.wishlist; // Yeh array hoga jisme stock bhi hai
+      const { data } = await API.get("/api/v1/wishlist", {
+        withCredentials: true,
+      });
+      return data.wishlist; // array of products
     } catch (error) {
       return rejectWithValue(error.response.data.message);
     }
@@ -36,7 +36,7 @@ export const getMyWishlist = createAsyncThunk(
 const wishlistSlice = createSlice({
   name: "wishlist",
   initialState: {
-    wishlistItems: [], // Isme products rahenge
+    wishlistItems: [],
     loading: false,
     error: null,
     message: null,
@@ -51,28 +51,18 @@ const wishlistSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // --- Toggle Case ---
-      .addCase(toggleWishlist.pending, (state) => {
-        // Note: Hum loading true nahi karte taaki UI flicker na kare
-        // User ko background me hone do
+      // Toggle Wishlist
+      .addCase(toggleWishlist.pending, () => {
+        // background update; loading nahi dikhate
       })
       .addCase(toggleWishlist.fulfilled, (state, action) => {
         state.message = action.payload.message;
-
-        // Agar backend ne updated list bheji hai (jo humne controller me kiya tha)
-        // to usse update kar lo.
-        if (action.payload.wishlist && action.payload.wishlist.products) {
-          // Controller ne raw DB object bheja hai, usme stock nahi hoga
-          // Isliye behtar hai hum bas message dikhayein aur phir 'getMyWishlist' call karein UI refresh ke liye
-          // Lekin instant UI update ke liye hum manual logic bhi laga sakte hain.
-          // Abhi ke liye simple rakhte hain:
-        }
       })
       .addCase(toggleWishlist.rejected, (state, action) => {
         state.error = action.payload;
       })
 
-      // --- Get Wishlist Case ---
+      // Get Wishlist
       .addCase(getMyWishlist.pending, (state) => {
         state.loading = true;
       })

@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import API from "../api";
 
-// Helper for Config
 const getConfig = (isMultipart = false) => ({
   headers: {
     "Content-Type": isMultipart ? "multipart/form-data" : "application/json",
@@ -28,7 +27,7 @@ export const getProducts = createAsyncThunk(
       if (ratings) link += `&ratings[gte]=${ratings}`;
       if (category) link += `&category=${category}`;
 
-      const { data } = await axios.get(link);
+      const { data } = await API.get(link);
       return data;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
@@ -41,7 +40,7 @@ export const getProductDetails = createAsyncThunk(
   "product/getDetails",
   async (id, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get(`/api/v1/product/${id}`);
+      const { data } = await API.get(`/api/v1/product/${id}`);
       return data.product;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
@@ -54,8 +53,10 @@ export const newReview = createAsyncThunk(
   "product/newReview",
   async (reviewData, { rejectWithValue }) => {
     try {
-      const config = { headers: { "Content-Type": "application/json" } };
-      const { data } = await axios.put(`/api/v1/review`, reviewData, config);
+      const { data } = await API.put(`/api/v1/review`, reviewData, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
       return data.success;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
@@ -63,14 +64,12 @@ export const newReview = createAsyncThunk(
   }
 );
 
-// --- NEW ADMIN ACTIONS ADDED BELOW ---
-
 // 4. GET ADMIN PRODUCTS (Admin Dashboard)
 export const getAdminProduct = createAsyncThunk(
   "product/getAdminProduct",
   async (_, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get("/api/v1/admin/products", getConfig());
+      const { data } = await API.get("/api/v1/admin/products", getConfig());
       return data.products;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
@@ -83,7 +82,7 @@ export const createProduct = createAsyncThunk(
   "product/createProduct",
   async (productData, { rejectWithValue }) => {
     try {
-      const { data } = await axios.post(
+      const { data } = await API.post(
         "/api/v1/admin/product/new",
         productData,
         getConfig(true)
@@ -100,7 +99,7 @@ export const deleteProduct = createAsyncThunk(
   "product/deleteProduct",
   async (id, { rejectWithValue }) => {
     try {
-      const { data } = await axios.delete(
+      const { data } = await API.delete(
         `/api/v1/admin/product/${id}`,
         getConfig()
       );
@@ -116,7 +115,7 @@ export const updateProduct = createAsyncThunk(
   "product/updateProduct",
   async ({ id, productData }, { rejectWithValue }) => {
     try {
-      const { data } = await axios.put(
+      const { data } = await API.put(
         `/api/v1/admin/product/${id}`,
         productData,
         getConfig(true)
@@ -135,9 +134,9 @@ const productSlice = createSlice({
     product: {},
     loading: false,
     error: null,
-    success: false, // For Review & Create Product
-    isDeleted: false, // For Admin
-    isUpdated: false, // For Admin
+    success: false,
+    isDeleted: false,
+    isUpdated: false,
     productsCount: 0,
     resultPerPage: 0,
     filteredProductsCount: 0,
@@ -149,7 +148,6 @@ const productSlice = createSlice({
     resetReviewSuccess: (state) => {
       state.success = false;
     },
-    // New Reducer for Admin Reset
     resetProductState: (state) => {
       state.success = false;
       state.isDeleted = false;
@@ -158,7 +156,7 @@ const productSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // --- GET PRODUCTS (User) ---
+      // GET PRODUCTS
       .addCase(getProducts.pending, (state) => {
         state.loading = true;
       })
@@ -167,14 +165,15 @@ const productSlice = createSlice({
         state.products = action.payload.products;
         state.productsCount = action.payload.productsCount;
         state.resultPerPage = action.payload.resultPerPage;
-        state.filteredProductsCount = action.payload.filteredProductsCount;
+        state.filteredProductsCount =
+          action.payload.filteredProductsCount;
       })
       .addCase(getProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
-      // --- GET DETAILS ---
+      // GET DETAILS
       .addCase(getProductDetails.pending, (state) => {
         state.loading = true;
       })
@@ -187,7 +186,7 @@ const productSlice = createSlice({
         state.error = action.payload;
       })
 
-      // --- NEW REVIEW ---
+      // NEW REVIEW
       .addCase(newReview.pending, (state) => {
         state.loading = true;
       })
@@ -200,20 +199,20 @@ const productSlice = createSlice({
         state.error = action.payload;
       })
 
-      // --- ADMIN: GET ALL PRODUCTS ---
+      // ADMIN: GET ALL PRODUCTS
       .addCase(getAdminProduct.pending, (state) => {
         state.loading = true;
       })
       .addCase(getAdminProduct.fulfilled, (state, action) => {
         state.loading = false;
-        state.products = action.payload; // Admin dashboard ke liye full list
+        state.products = action.payload;
       })
       .addCase(getAdminProduct.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
-      // --- ADMIN: CREATE PRODUCT ---
+      // ADMIN: CREATE PRODUCT
       .addCase(createProduct.pending, (state) => {
         state.loading = true;
       })
@@ -227,7 +226,7 @@ const productSlice = createSlice({
         state.error = action.payload;
       })
 
-      // --- ADMIN: DELETE PRODUCT ---
+      // ADMIN: DELETE PRODUCT
       .addCase(deleteProduct.pending, (state) => {
         state.loading = true;
       })
@@ -240,7 +239,7 @@ const productSlice = createSlice({
         state.error = action.payload;
       })
 
-      // --- ADMIN: UPDATE PRODUCT ---
+      // ADMIN: UPDATE PRODUCT
       .addCase(updateProduct.pending, (state) => {
         state.loading = true;
       })
@@ -255,6 +254,9 @@ const productSlice = createSlice({
   },
 });
 
-export const { clearErrors, resetReviewSuccess, resetProductState } =
-  productSlice.actions;
+export const {
+  clearErrors,
+  resetReviewSuccess,
+  resetProductState,
+} = productSlice.actions;
 export default productSlice.reducer;

@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import API from "../api";
 
-// Helper Config
 const getConfig = () => ({
   headers: { "Content-Type": "application/json" },
   withCredentials: true,
@@ -12,11 +11,7 @@ export const createOrder = createAsyncThunk(
   "order/createOrder",
   async (order, { rejectWithValue }) => {
     try {
-      const { data } = await axios.post(
-        "/api/v1/order/new",
-        order,
-        getConfig()
-      );
+      const { data } = await API.post("/api/v1/order/new", order, getConfig());
       return data;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
@@ -29,7 +24,7 @@ export const myOrders = createAsyncThunk(
   "order/myOrders",
   async (_, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get("/api/v1/orders/me", getConfig());
+      const { data } = await API.get("/api/v1/orders/me", getConfig());
       return data.orders;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
@@ -37,12 +32,12 @@ export const myOrders = createAsyncThunk(
   }
 );
 
-// 3. GET ALL ORDERS (Admin) - **Ye Dashboard ke liye chahiye**
+// 3. GET ALL ORDERS (Admin)
 export const getAllOrders = createAsyncThunk(
   "order/getAllOrders",
   async (_, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get("/api/v1/admin/orders", getConfig());
+      const { data } = await API.get("/api/v1/admin/orders", getConfig());
       return data.orders;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
@@ -55,7 +50,7 @@ export const updateOrder = createAsyncThunk(
   "order/updateOrder",
   async ({ id, status }, { rejectWithValue }) => {
     try {
-      const { data } = await axios.put(
+      const { data } = await API.put(
         `/api/v1/admin/order/${id}`,
         { status },
         getConfig()
@@ -72,7 +67,7 @@ export const deleteOrder = createAsyncThunk(
   "order/deleteOrder",
   async (id, { rejectWithValue }) => {
     try {
-      const { data } = await axios.delete(
+      const { data } = await API.delete(
         `/api/v1/admin/order/${id}`,
         getConfig()
       );
@@ -88,7 +83,7 @@ export const getOrderDetails = createAsyncThunk(
   "order/orderDetails",
   async (id, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get(`/api/v1/order/${id}`, getConfig());
+      const { data } = await API.get(`/api/v1/order/${id}`, getConfig());
       return data.order;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
@@ -100,10 +95,10 @@ const orderSlice = createSlice({
   name: "order",
   initialState: {
     loading: false,
-    orders: [], // For My Orders & Admin All Orders
-    order: {}, // For Order Details
+    orders: [],
+    order: {},
     error: null,
-    isUpdated: false, // For Admin Update/Delete
+    isUpdated: false,
     isDeleted: false,
   },
   reducers: {
@@ -117,7 +112,7 @@ const orderSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // --- CREATE ORDER ---
+      // CREATE ORDER
       .addCase(createOrder.pending, (state) => {
         state.loading = true;
       })
@@ -130,7 +125,7 @@ const orderSlice = createSlice({
         state.error = action.payload;
       })
 
-      // --- MY ORDERS ---
+      // MY ORDERS
       .addCase(myOrders.pending, (state) => {
         state.loading = true;
       })
@@ -143,7 +138,7 @@ const orderSlice = createSlice({
         state.error = action.payload;
       })
 
-      // --- GET ALL ORDERS (ADMIN) ---
+      // GET ALL ORDERS (ADMIN)
       .addCase(getAllOrders.pending, (state) => {
         state.loading = true;
       })
@@ -156,7 +151,7 @@ const orderSlice = createSlice({
         state.error = action.payload;
       })
 
-      // --- UPDATE ORDER ---
+      // UPDATE ORDER
       .addCase(updateOrder.pending, (state) => {
         state.loading = true;
       })
@@ -169,7 +164,7 @@ const orderSlice = createSlice({
         state.error = action.payload;
       })
 
-      // --- DELETE ORDER ---
+      // DELETE ORDER
       .addCase(deleteOrder.pending, (state) => {
         state.loading = true;
       })
@@ -182,7 +177,7 @@ const orderSlice = createSlice({
         state.error = action.payload;
       })
 
-      // --- ORDER DETAILS ---
+      // ORDER DETAILS
       .addCase(getOrderDetails.pending, (state) => {
         state.loading = true;
       })

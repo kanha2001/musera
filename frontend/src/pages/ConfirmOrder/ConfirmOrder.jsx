@@ -4,6 +4,7 @@ import "./ConfirmOrder.css";
 import { useSelector } from "react-redux";
 import CheckoutSteps from "../../components/CartModel/CheckoutSteps";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const ConfirmOrder = () => {
   const navigate = useNavigate();
@@ -25,8 +26,7 @@ const ConfirmOrder = () => {
 
   const address = `${shippingInfo.address}, ${shippingInfo.city}, ${shippingInfo.state}, ${shippingInfo.pinCode}, ${shippingInfo.country}`;
 
-  // yahi par sessionStorage me orderInfo store karo
-  const handleProceed = () => {
+  const proceedToPayment = () => {
     const orderInfo = {
       itemsPrice: subtotal,
       shippingPrice: shippingCharges,
@@ -34,6 +34,7 @@ const ConfirmOrder = () => {
       totalPrice,
     };
     sessionStorage.setItem("orderInfo", JSON.stringify(orderInfo));
+    toast.info("Proceeding to payment...");
     navigate("/payment");
   };
 
@@ -97,7 +98,7 @@ const ConfirmOrder = () => {
             <span>€{totalPrice.toFixed(2)}</span>
           </div>
 
-          <button onClick={handleProceed} className="payment-btn">
+          <button onClick={proceedToPayment} className="payment-btn">
             PROCEED TO PAYMENT
           </button>
         </div>

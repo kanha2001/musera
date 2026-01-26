@@ -1,4 +1,3 @@
-// frontend/src/pages/Order/Success.jsx
 import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import axios from "axios";
@@ -12,29 +11,13 @@ const Success = () => {
   const session_id = searchParams.get("session_id");
   const dispatch = useDispatch();
 
-  // Redux
-  const { cartItems: reduxCartItems, shippingInfo: reduxShipping } = useSelector(
-    (state) => state.cart
-  );
-
-  // LocalStorage fallback (important after Stripe redirect)
-  const lsCartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
-  const lsShippingInfo = JSON.parse(
-    localStorage.getItem("shippingInfo") || "{}"
-  );
-
-  const cartItems = reduxCartItems && reduxCartItems.length > 0
-    ? reduxCartItems
-    : lsCartItems;
-
-  const shippingInfo =
-    reduxShipping && Object.keys(reduxShipping).length > 0
-      ? reduxShipping
-      : lsShippingInfo;
+  // Cart ka data chahiye order banane ke liye
+  const { cartItems, shippingInfo } = useSelector((state) => state.cart);
 
   const [status, setStatus] = useState("processing");
-  const runOnce = useRef(false);
+  const runOnce = useRef(false); // Double call rokne ke liye
 
+  // Calculations
   const subtotal = cartItems.reduce(
     (acc, item) => acc + item.quantity * item.price,
     0
@@ -49,21 +32,24 @@ const Success = () => {
       return;
     }
 
-    if (runOnce.current) return;
+    if (runOnce.current) return; // Prevent double execution
     runOnce.current = true;
 
     const createOrder = async () => {
       try {
+        // 1. Payment Verify Karo (Backend se ab payment_id bhi aayegi)
         const { data: paymentData } = await axios.post(
           "/api/v1/payment/verification",
           { session_id }
         );
 
         if (paymentData.payment_status === "paid") {
+          // 2. Order Database mein Save Karo
           const orderData = {
             shippingInfo,
             orderItems: cartItems,
             paymentInfo: {
+              // CHANGE: Ab hum Backend se aayi hui 'payment_id' use kar rahe hain (pi_...)
               id: paymentData.payment_id,
               status: "succeeded",
             },
@@ -76,9 +62,9 @@ const Success = () => {
           const config = { headers: { "Content-Type": "application/json" } };
           await axios.post("/api/v1/order/new", orderData, config);
 
+          // 3. Success UI & Clear Cart
           setStatus("success");
           dispatch(clearCart());
-          localStorage.removeItem("cartItems");
         } else {
           setStatus("failed");
         }
@@ -110,8 +96,9 @@ const Success = () => {
         <div className="success-content">
           <CheckCircle size={80} color="#2ecc71" />
           <h1>Order Placed Successfully!</h1>
-          <Link to="/account/orders" className="success-btn">
-            View My Orders
+          {/* <p>Your Payment ID has been saved.</p> */}
+          <Link to="/shop" className="success-btn">
+            Continue Shopping
           </Link>
         </div>
       )}
@@ -121,7 +108,7 @@ const Success = () => {
           <XCircle size={80} color="#e74c3c" />
           <h1>Payment Verified but Order Failed</h1>
           <p>Contact support if money was deducted.</p>
-          <Link to="/cart" className="success-btn">
+          <Link to="/order/confirm" className="success-btn">
             Try Again
           </Link>
         </div>

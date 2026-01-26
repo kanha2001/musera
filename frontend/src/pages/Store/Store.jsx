@@ -228,7 +228,6 @@ function Store() {
                   </div>
                 </Link>
 
-                {/* ADD TO CART BUTTON like screenshot */}
                 <button
                   className={`store-add-btn ${
                     isInCart(product._id) ? "in-cart" : ""

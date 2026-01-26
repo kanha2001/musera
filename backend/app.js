@@ -1,32 +1,43 @@
+// backend/app.js
+
 const express = require("express");
 const app = express();
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const path = require("path");
-
 const cors = require("cors");
-app.use(cors({
-  origin: process.env.FRONTEND_URL || "https://your-frontend.onrender.com",
-  credentials: true
-}));
 
+// -------- TRUST PROXY (Render / production) --------
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
 
+// -------- CORS --------
+app.use(
+  cors({
+    origin: [
+      process.env.FRONTEND_URL || "https://your-frontend.onrender.com",
+      "http://localhost:5173",
+      "http://localhost:3000",
+    ],
+    credentials: true,
+  })
+);
+
+// -------- BODY PARSERS --------
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// --- STATIC FILES SERVING (CRITICAL FIX) ---
-// Frontend request karega: http://localhost:4000/uploads/users/avatar.jpg
-// Backend dhoondega: backend/public/uploads/users/avatar.jpg
-
-// Option 1: Agar "public" folder "backend" folder ke andar hai
+// -------- STATIC FILES --------
+// URL: http://backend/uploads/users/xyz.jpg
+// Folder: backend/public/uploads/users
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
-
-// Option 2 (Backup): Kabhi kabhi structure alag hota hai, to root public bhi serve karo
+// Backup option (agar structure alag ho to uncomment kar sakte ho)
 // app.use("/uploads", express.static(path.join(__dirname, "../public/uploads")));
 
-// --- ROUTES ---
+// -------- ROUTES --------
 const user = require("./routes/userRoute");
 const product = require("./routes/productRoute");
 const order = require("./routes/orderRoute");

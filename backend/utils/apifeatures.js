@@ -1,3 +1,5 @@
+// backend/utils/apiFeatures.js
+
 class ApiFeatures {
   constructor(query, queryStr) {
     this.query = query;
@@ -9,7 +11,7 @@ class ApiFeatures {
       ? {
           name: {
             $regex: this.queryStr.keyword,
-            $options: "i", // Case insensitive search
+            $options: "i",
           },
         }
       : {};
@@ -21,16 +23,13 @@ class ApiFeatures {
   filter() {
     const queryCopy = { ...this.queryStr };
 
-    // Remove fields for category
+    // Remove fields not needed for filtering
     const removeFields = ["keyword", "page", "limit"];
     removeFields.forEach((key) => delete queryCopy[key]);
 
-    // --- CATEGORY FIX ---
-    // Agar category hai, to usse case-insensitive banao
+    // Category agar aayegi to yahan handle kar sakte ho (abhi simple match)
     if (queryCopy.category) {
-      // Yeh ensure karta hai ki 'Shirts' aur 'shirts' dono match hon
-      // Lekin agar DB mein Array hai (['Shirts', 'Pants']), to simple match bhi chalega
-      // Filhal direct match rakhte hain agar DB structure simple hai
+      // future me category ka custom logic yahan dal sakte ho
     }
 
     // Filter For Price and Rating

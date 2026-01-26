@@ -3,58 +3,38 @@ import React from "react";
 import "./ConfirmOrder.css";
 import { useSelector } from "react-redux";
 import CheckoutSteps from "../../components/CartModel/CheckoutSteps";
-import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
-import API from "../../api";
+import { Link, useNavigate } from "react-router-dom";
 
 const ConfirmOrder = () => {
+  const navigate = useNavigate();
   const { shippingInfo, cartItems } = useSelector((state) => state.cart);
   const { user } = useSelector((state) => state.user);
+
+  if (!shippingInfo || cartItems.length === 0) {
+    navigate("/cart");
+    return null;
+  }
 
   const subtotal = cartItems.reduce(
     (acc, item) => acc + item.quantity * item.price,
     0
   );
-
   const shippingCharges = subtotal > 200 ? 0 : 50;
   const tax = subtotal * 0.18;
   const totalPrice = subtotal + shippingCharges + tax;
 
   const address = `${shippingInfo.address}, ${shippingInfo.city}, ${shippingInfo.state}, ${shippingInfo.pinCode}, ${shippingInfo.country}`;
 
-  const proceedToPayment = async () => {
-    try {
-      const config = {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-      };
-
-      toast.info("Redirecting to Payment Gateway...");
-
-      const { data } = await API.post(
-        "/api/v1/payment/create-checkout-session",
-        {
-          cartItems,
-          shippingInfo,
-          user,
-          subtotal,
-          shippingCharges,
-          tax,
-          totalPrice,
-        },
-        config
-      );
-
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        toast.error("Payment URL not received from server");
-      }
-    } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Payment Error, please try again"
-      );
-    }
+  // yahi par sessionStorage me orderInfo store karo
+  const handleProceed = () => {
+    const orderInfo = {
+      itemsPrice: subtotal,
+      shippingPrice: shippingCharges,
+      taxPrice: tax,
+      totalPrice,
+    };
+    sessionStorage.setItem("orderInfo", JSON.stringify(orderInfo));
+    navigate("/payment");
   };
 
   return (
@@ -79,7 +59,7 @@ const ConfirmOrder = () => {
           <h2 className="confirm-heading">Your Cart Items</h2>
           <div className="confirm-cart-items">
             {cartItems.length === 0 ? (
-              <p>Cart is Empty (Reloading...)</p>
+              <p>Cart is Empty</p>
             ) : (
               cartItems.map((item) => (
                 <div key={item.product} className="confirm-item-card">
@@ -117,7 +97,7 @@ const ConfirmOrder = () => {
             <span>€{totalPrice.toFixed(2)}</span>
           </div>
 
-          <button onClick={proceedToPayment} className="payment-btn">
+          <button onClick={handleProceed} className="payment-btn">
             PROCEED TO PAYMENT
           </button>
         </div>

@@ -1,40 +1,52 @@
+// frontend/src/pages/Order/Payment.jsx
 import React from "react";
 import CheckoutSteps from "../../components/CartModel/CheckoutSteps";
 import { useSelector } from "react-redux";
-import axios from "axios";
 import "./Payment.css";
 import { toast } from "react-toastify";
+import API from "../../api";
 
 const Payment = () => {
   const orderInfo = JSON.parse(sessionStorage.getItem("orderInfo"));
   const { cartItems, shippingInfo } = useSelector((state) => state.cart);
   const { user } = useSelector((state) => state.user);
 
+  const subtotal = cartItems.reduce(
+    (acc, item) => acc + item.quantity * item.price,
+    0
+  );
+  const shippingCharges = subtotal > 200 ? 0 : 50;
+  const tax = subtotal * 0.18;
+  const totalPrice = subtotal + shippingCharges + tax;
+
   const handleCheckout = async () => {
     try {
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
-
-      // 1. Backend ko data bhejo
-      const { data } = await axios.post(
+      const { data } = await API.post(
         "/api/v1/payment/create-checkout-session",
         {
           cartItems,
           shippingInfo,
-          user, // Email ke liye
+          user,
+          subtotal,
+          shippingCharges,
+          tax,
+          totalPrice,
         },
-        config
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
       );
 
-      // 2. Stripe URL par redirect karo
       if (data.url) {
         window.location.href = data.url;
+      } else {
+        toast.error("Payment URL not received");
       }
     } catch (error) {
-      toast.error(error.response.data.message || "Payment Error");
+      toast.error(
+        error.response?.data?.message || "Payment Error, please try again"
+      );
     }
   };
 
@@ -46,12 +58,12 @@ const Payment = () => {
         <h2 className="payment-heading">Complete Payment</h2>
 
         <p className="payment-text">
-          You will be redirected to Stripe's secure payment page.
+          You will be redirected to Stripe&apos;s secure payment page.
         </p>
 
         <div className="payment-summary">
           <span>Total Amount:</span>
-          <b>€{orderInfo && orderInfo.totalPrice}</b>
+          <b>€{orderInfo?.totalPrice || totalPrice.toFixed(2)}</b>
         </div>
 
         <button onClick={handleCheckout} className="pay-btn">

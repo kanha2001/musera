@@ -1,6 +1,7 @@
+// backend/routes/paymentRoute.js
 const express = require("express");
 const {
-  createCheckoutSession, // Naya function import karein
+  createCheckoutSession,
   sendStripeApiKey,
   paymentVerification,
 } = require("../controllers/paymentController");
@@ -8,7 +9,6 @@ const {
 const { isAuthenticatedUser } = require("../middleware/auth");
 const router = express.Router();
 
-// Route Update: Pehle processPayment tha, ab createCheckoutSession hai
 router
   .route("/payment/create-checkout-session")
   .post(isAuthenticatedUser, createCheckoutSession);

@@ -1,20 +1,15 @@
-import React from "react"; // useEffect hata diya
+// frontend/src/pages/Order/ConfirmOrder.jsx
+import React from "react";
 import "./ConfirmOrder.css";
 import { useSelector } from "react-redux";
 import CheckoutSteps from "../../components/CartModel/CheckoutSteps";
-import { Link } from "react-router-dom"; // useNavigate hata diya
-import axios from "axios";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import API from "../../api";
 
 const ConfirmOrder = () => {
-  // navigate hata diya
   const { shippingInfo, cartItems } = useSelector((state) => state.cart);
   const { user } = useSelector((state) => state.user);
-
-  // --- DELETE KIYA GAYA CODE ---
-  // Woh useEffect jo check karta tha "if cartItems.length === 0 navigate(/shop)"
-  // wo hata diya hai taaki page reload hone par turant redirect na kare.
-  // -----------------------------
 
   const subtotal = cartItems.reduce(
     (acc, item) => acc + item.quantity * item.price,
@@ -29,20 +24,36 @@ const ConfirmOrder = () => {
 
   const proceedToPayment = async () => {
     try {
-      const config = { headers: { "Content-Type": "application/json" } };
+      const config = {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      };
+
       toast.info("Redirecting to Payment Gateway...");
 
-      const { data } = await axios.post(
+      const { data } = await API.post(
         "/api/v1/payment/create-checkout-session",
-        { cartItems, shippingInfo, user },
+        {
+          cartItems,
+          shippingInfo,
+          user,
+          subtotal,
+          shippingCharges,
+          tax,
+          totalPrice,
+        },
         config
       );
 
       if (data.url) {
         window.location.href = data.url;
+      } else {
+        toast.error("Payment URL not received from server");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Payment Error");
+      toast.error(
+        error.response?.data?.message || "Payment Error, please try again"
+      );
     }
   };
 

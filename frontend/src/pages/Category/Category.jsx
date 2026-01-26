@@ -2,10 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getProducts, clearErrors } from "../../features/productSlice";
-import { addItemToCart } from "../../features/cartSlice"; // 🔥 YOUR CART ACTION
+import { addItemToCart } from "../../features/cartSlice";
 import { toast } from "react-toastify";
 import "./Category.css";
 import heroBg from "../Assets/hero8.png";
+
+// ✅ Backend URL (env + fallback)
+const BACKEND_URL =
+  import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
 
 const CategoryPage = () => {
   const { category } = useParams();
@@ -53,7 +57,7 @@ const CategoryPage = () => {
         currentPage: 1,
         keyword: "",
         price: [0, 25000],
-      })
+      }),
     );
   }, [category, dispatch, error]);
 
@@ -65,14 +69,28 @@ const CategoryPage = () => {
     }[category] ||
     category?.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
 
-  // 🔥 YOUR CART FORMAT
+  const getImageUrl = (product) => {
+    const img = product.images?.[0];
+    if (!img || !(img.url || img)) {
+      return "https://via.placeholder.com/300x400/f0ebe5/999?text=No+Image";
+    }
+    const raw = typeof img === "string" ? img : img.url;
+    if (raw?.startsWith("/uploads")) {
+      return `${BACKEND_URL}${raw}`;
+    }
+    return (
+      raw ||
+      "https://via.placeholder.com/300x400/f0ebe5/999?text=No+Image"
+    );
+  };
+
   const handleAddToCart = (product) => {
     const cartItem = {
       product: product._id,
       name: product.name,
       price: product.price,
       quantity: 1,
-      image: product.images?.[0]?.url,
+      image: getImageUrl(product),
       stock: product.stock || 10,
     };
 
@@ -80,7 +98,6 @@ const CategoryPage = () => {
     toast.success(`${product.name} added to cart! 🛒`);
   };
 
-  // Check if product is already in cart
   const isInCart = (productId) => {
     return cartItems.some((item) => item.product === productId);
   };
@@ -123,12 +140,7 @@ const CategoryPage = () => {
                 <div className="boy-card">
                   <div className="boy-card-img-wrap">
                     <img
-                      src={
-                        product.images?.[0]?.url?.startsWith("/uploads")
-                          ? `http://localhost:4000${product.images[0].url}`
-                          : product.images?.[0]?.url ||
-                            "https://via.placeholder.com/300x400/f0ebe5/999?text=No+Image"
-                      }
+                      src={getImageUrl(product)}
                       alt={product.name}
                       onError={(e) => {
                         e.target.src =

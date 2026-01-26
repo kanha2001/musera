@@ -83,7 +83,9 @@ const FILTER_CONFIG = [
   { label: "RATING", type: "rating", options: RATING_OPTIONS },
 ];
 
-const BACKEND_URL = "http://localhost:4000";
+// BACKEND URL env se lo (local + live dono ke liye)
+const BACKEND_URL =
+  import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
 
 const safeString = (value) => {
   if (value == null) return "";
@@ -114,14 +116,12 @@ const ProductImageSlider = ({
     wishlistItems.some((item) => item?.product === productId);
 
   useEffect(() => {
-    let interval;
-    if (isHovered && Array.isArray(images) && images.length > 1) {
-      interval = setInterval(() => {
-        setCurrentImgIndex((prev) => (prev + 1) % images.length);
-      }, 1000);
-    } else {
-      setCurrentImgIndex(0);
+    if (!(isHovered && Array.isArray(images) && images.length > 1)) {
+      return;
     }
+    const interval = setInterval(() => {
+      setCurrentImgIndex((prev) => (prev + 1) % images.length);
+    }, 1000);
     return () => clearInterval(interval);
   }, [isHovered, images]);
 
@@ -163,16 +163,22 @@ const ProductImageSlider = ({
   return (
     <div
       className="shop-card-img-wrap"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => {
+        setIsHovered(true);
+        setCurrentImgIndex(0);
+      }}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        setCurrentImgIndex(0);
+      }}
     >
       <img
         src={currentSrc}
         alt={name}
-        onError={(e) =>
-          (e.target.src =
-            "https://via.placeholder.com/320x420/f0ebe5/999?text=No+Image")
-        }
+        onError={(e) => {
+          e.target.src =
+            "https://via.placeholder.com/320x420/f0ebe5/999?text=No+Image";
+        }}
       />
       <button
         className={`shop-heart ${isInWishlist ? "active" : ""}`}
@@ -520,7 +526,7 @@ function Shop() {
 
       {/* MAIN CONTENT */}
       <main className="shop-content">
-        {/* TOP BAR: FILTER + SORT always side by side */}
+        {/* TOP BAR: FILTER + SORT */}
         <div className="shop-topbar-row">
           <div className="shop-mobile-topbar">
             <button
@@ -550,7 +556,7 @@ function Shop() {
           </div>
         </div>
 
-        {/* DESKTOP TABS (mobile me hide honge CSS se) */}
+        {/* DESKTOP TABS */}
         <div className="shop-top-row">
           <div className="shop-tabs">
             {CATEGORY_TABS.map((tab) => (
@@ -576,9 +582,9 @@ function Shop() {
           </div>
         ) : (
           <div className="shop-grid">
-            {sortedProducts.map((p) => (
+            {sortedProducts.map((p, index) => (
               <Link
-                key={p._id || p.id || Math.random().toString()}
+                key={p._id || p.id || `product-${index}`}
                 to={`/product/${p._id || p.id || "product"}`}
                 className="shop-card"
               >

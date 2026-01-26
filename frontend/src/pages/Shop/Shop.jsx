@@ -59,6 +59,7 @@ const SIZE_OPTIONS = [
   "5XL",
   "6XL",
 ];
+
 const COLOR_OPTIONS = [
   "Black",
   "White",
@@ -71,6 +72,7 @@ const COLOR_OPTIONS = [
   "Grey",
   "Navy",
 ];
+
 const RATING_OPTIONS = ["5⭐", "4⭐", "3⭐", "2⭐", "1⭐"];
 
 const FILTER_CONFIG = [
@@ -81,8 +83,7 @@ const FILTER_CONFIG = [
   { label: "RATING", type: "rating", options: RATING_OPTIONS },
 ];
 
-const BACKEND_URL =
-  import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+const BACKEND_URL = "http://localhost:4000";
 
 const safeString = (value) => {
   if (value == null) return "";
@@ -106,22 +107,21 @@ const ProductImageSlider = ({
   const dispatch = useDispatch();
 
   const { wishlistItems = [] } = useSelector(
-    (state) => state.wishlist || { wishlistItems: [] }
+    (state) => state.wishlist || { wishlistItems: [] },
   );
   const isInWishlist =
     Array.isArray(wishlistItems) &&
     wishlistItems.some((item) => item?.product === productId);
 
   useEffect(() => {
-    if (!(isHovered && Array.isArray(images) && images.length > 1)) {
-      // No hover or only one image: do nothing, keep current index
-      return;
+    let interval;
+    if (isHovered && Array.isArray(images) && images.length > 1) {
+      interval = setInterval(() => {
+        setCurrentImgIndex((prev) => (prev + 1) % images.length);
+      }, 1000);
+    } else {
+      setCurrentImgIndex(0);
     }
-
-    const interval = setInterval(() => {
-      setCurrentImgIndex((prev) => (prev + 1) % images.length);
-    }, 1000);
-
     return () => clearInterval(interval);
   }, [isHovered, images]);
 
@@ -156,21 +156,15 @@ const ProductImageSlider = ({
         name,
         price,
         image: getImageUrl(images[0]),
-      })
+      }),
     );
   };
 
   return (
     <div
       className="shop-card-img-wrap"
-      onMouseEnter={() => {
-        setIsHovered(true);
-        setCurrentImgIndex(0);
-      }}
-      onMouseLeave={() => {
-        setIsHovered(false);
-        setCurrentImgIndex(0);
-      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <img
         src={currentSrc}
@@ -222,10 +216,13 @@ function Shop() {
   const [activeTab, setActiveTab] = useState("ALL");
   const [sort, setSort] = useState("popular");
 
+  // mobile filter drawer
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
+
   useEffect(() => {
     const initFilters = FILTER_CONFIG.reduce(
       (acc, f) => ({ ...acc, [f.label]: false }),
-      {}
+      {},
     );
     setOpenFilters(initFilters);
   }, []);
@@ -264,19 +261,19 @@ function Shop() {
     setSelectedCategories((prev) =>
       prev.includes(category)
         ? prev.filter((c) => c !== category)
-        : [...prev, category]
+        : [...prev, category],
     );
   };
 
   const handleSizeToggle = (size) => {
     setSelectedSizes((prev) =>
-      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
+      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size],
     );
   };
 
   const handleColorToggle = (color) => {
     setSelectedColors((prev) =>
-      prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color]
+      prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color],
     );
   };
 
@@ -284,7 +281,7 @@ function Shop() {
     setSelectedRatings((prev) =>
       prev.includes(rating)
         ? prev.filter((r) => r !== rating)
-        : [...prev, rating]
+        : [...prev, rating],
     );
   };
 
@@ -307,7 +304,7 @@ function Shop() {
           const productText =
             safeString(product.category) + " " + safeString(product.name);
           const matchesCategory = selectedCategories.some((cat) =>
-            productText.includes(safeString(cat))
+            productText.includes(safeString(cat)),
           );
           if (!matchesCategory) return false;
         }
@@ -322,7 +319,7 @@ function Shop() {
             ? product.availableSizes.map(safeString)
             : safeString(product.size).split(",");
           const matchesSize = selectedSizes.some((size) =>
-            productSizes.some((ps) => ps.includes(safeString(size)))
+            productSizes.some((ps) => ps.includes(safeString(size))),
           );
           if (!matchesSize) return false;
         }
@@ -332,7 +329,7 @@ function Shop() {
             ? product.colors.map(safeString)
             : safeString(product.color).split(",");
           const matchesColor = selectedColors.some((color) =>
-            productColors.some((pc) => pc.includes(safeString(color)))
+            productColors.some((pc) => pc.includes(safeString(color))),
           );
           if (!matchesColor) return false;
         }
@@ -388,7 +385,20 @@ function Shop() {
 
   return (
     <div className="shop-page">
-      <aside className="shop-filters">
+      {/* SIDEBAR / DRAWER */}
+      <aside
+        className={`shop-filters ${isMobileFiltersOpen ? "open" : ""}`}
+      >
+        <div className="shop-filters-header-mobile">
+          <span>Filters</span>
+          <button
+            className="shop-filters-close-btn"
+            onClick={() => setIsMobileFiltersOpen(false)}
+          >
+            ✕
+          </button>
+        </div>
+
         {FILTER_CONFIG.map((f) => (
           <div key={f.label} className="filter-section">
             <button
@@ -496,26 +506,29 @@ function Shop() {
           <button className="filter-clear" onClick={clearAllFilters}>
             CLEAR
           </button>
-          <button className="filter-apply" onClick={applyFilters}>
+          <button
+            className="filter-apply"
+            onClick={() => {
+              applyFilters();
+              setIsMobileFiltersOpen(false);
+            }}
+          >
             APPLY ({sortedProducts.length})
           </button>
         </div>
       </aside>
 
+      {/* MAIN CONTENT */}
       <main className="shop-content">
-        <div className="shop-top-row">
-          <div className="shop-tabs">
-            {CATEGORY_TABS.map((tab) => (
-              <button
-                key={tab}
-                className={`shop-tab-btn ${
-                  activeTab === tab ? "active" : ""
-                }`}
-                onClick={() => handleTabClick(tab)}
-              >
-                {tab}
-              </button>
-            ))}
+        {/* TOP BAR: FILTER + SORT always side by side */}
+        <div className="shop-topbar-row">
+          <div className="shop-mobile-topbar">
+            <button
+              className="shop-mobile-filter-btn"
+              onClick={() => setIsMobileFiltersOpen(true)}
+            >
+              FILTERS
+            </button>
           </div>
 
           <div className="shop-sort">
@@ -537,6 +550,23 @@ function Shop() {
           </div>
         </div>
 
+        {/* DESKTOP TABS (mobile me hide honge CSS se) */}
+        <div className="shop-top-row">
+          <div className="shop-tabs">
+            {CATEGORY_TABS.map((tab) => (
+              <button
+                key={tab}
+                className={`shop-tab-btn ${
+                  activeTab === tab ? "active" : ""
+                }`}
+                onClick={() => handleTabClick(tab)}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {loading ? (
           <div className="loading">Loading Products...</div>
         ) : sortedProducts.length === 0 ? (
@@ -546,9 +576,9 @@ function Shop() {
           </div>
         ) : (
           <div className="shop-grid">
-            {sortedProducts.map((p, index) => (
+            {sortedProducts.map((p) => (
               <Link
-                key={p._id || p.id || `product-${index}`}
+                key={p._id || p.id || Math.random().toString()}
                 to={`/product/${p._id || p.id || "product"}`}
                 className="shop-card"
               >

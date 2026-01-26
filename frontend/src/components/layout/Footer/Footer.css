@@ -10,11 +10,10 @@
 .ft-wrapper {
   background: var(--ft-bg);
   color: var(--ft-text);
-  /* Use Ubuntu as requested */
   font-family: "Ubuntu", sans-serif;
   padding: 80px 24px 40px;
   border-top: 1px solid var(--ft-border);
-  margin-top: auto; /* Footer ko bottom push karne ke liye zaroori hai */
+  margin-top: auto; /* Footer ko bottom push karne ke liye */
 }
 
 .ft-container {
@@ -77,7 +76,7 @@
   outline: none;
   color: var(--ft-heading);
   font-size: 15px;
-  font-family: "Ubuntu", sans-serif; /* Explicit font inheritance */
+  font-family: "Ubuntu", sans-serif;
 }
 
 .ft-input-group input::placeholder {
@@ -176,7 +175,7 @@
 .ft-socials a {
   color: var(--ft-heading);
   transition: transform 0.2s, color 0.2s;
-  display: flex; /* Centers SVG icon */
+  display: flex;
 }
 
 .ft-socials a:hover {
@@ -234,9 +233,10 @@
     max-width: 100%;
   }
 
+  /* Yahan mobile pe 2x2 grid: upar 2 columns, niche 2 columns */
   .ft-links-grid {
-    grid-template-columns: 1fr;
-    gap: 40px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px 20px;
   }
 
   .ft-bottom {

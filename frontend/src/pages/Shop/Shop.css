@@ -4,6 +4,7 @@
   min-height: calc(100vh - 60px);
 }
 
+/* SIDEBAR */
 .shop-filters {
   position: sticky;
   top: 60px;
@@ -56,7 +57,7 @@
   gap: 8px;
 }
 
-/* 🔥 SCROLLABLE CATEGORY LIST */
+/* SCROLLABLE CATEGORY LIST */
 .scrollable-category-list {
   max-height: 200px;
   overflow-y: auto;
@@ -86,7 +87,7 @@
   height: 16px;
 }
 
-/* 🔥 PRICE RANGE SLIDER */
+/* PRICE RANGE */
 .price-range-filter {
   gap: 10px;
 }
@@ -167,7 +168,7 @@
   cursor: pointer;
 }
 
-/* 🔥 COLOR CHIPS */
+/* COLOR CHIPS */
 .color-grid {
   display: flex;
   flex-wrap: wrap;
@@ -221,10 +222,19 @@
   color: #fff;
 }
 
-/* RIGHT CONTENT AREA */
+/* CONTENT */
 .shop-content {
   padding: 16px 20px 32px 20px;
   overflow: auto;
+}
+
+/* TOP ROWS */
+.shop-topbar-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 12px;
 }
 
 .shop-top-row {
@@ -249,6 +259,7 @@
   text-transform: uppercase;
   letter-spacing: 0.12em;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .shop-tab-btn.active {
@@ -257,6 +268,23 @@
   border-color: #111;
 }
 
+/* FILTER BUTTON */
+.shop-mobile-topbar {
+  display: flex;
+}
+
+.shop-mobile-filter-btn {
+  border: none;
+  background: #111;
+  color: #fff;
+  padding: 8px 18px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+}
+
+/* SORT */
 .shop-sort .sort-label {
   font-size: 13px;
   display: flex;
@@ -292,6 +320,7 @@
   font-size: 10px;
 }
 
+/* GRID */
 .shop-grid {
   margin-top: 10px;
   display: grid;
@@ -402,48 +431,7 @@
   transform: scale(1.3);
 }
 
-/* Responsive */
-@media (max-width: 1200px) {
-  .shop-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 1000px) {
-  .shop-page {
-    grid-template-columns: 220px minmax(0, 1fr);
-  }
-  .shop-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 800px) {
-  .shop-page {
-    grid-template-columns: 1fr;
-  }
-  .shop-filters {
-    position: static;
-    border-right: none;
-    border-bottom: 1px solid #f0f0f0;
-    height: auto;
-    max-height: 60vh;
-    overflow-y: auto;
-  }
-  .shop-content {
-    padding: 14px;
-  }
-  .shop-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 520px) {
-  .shop-grid {
-    grid-template-columns: 1fr;
-  }
-}
-/* 🔥 ADD THESE STYLES AT END OF Shop.css */
+/* RATING CHIPS */
 .rating-grid {
   display: flex;
   flex-wrap: wrap;
@@ -467,4 +455,103 @@
   border-color: #f5a623;
   background: #f5a623;
   color: #fff;
+}
+
+/* MOBILE DRAWER + GRID */
+.shop-filters-header-mobile {
+  display: none;
+}
+
+.shop-filters-close-btn {
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+  .shop-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1000px) {
+  .shop-page {
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
+  .shop-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 800px) {
+  .shop-page {
+    grid-template-columns: 1fr;
+  }
+
+  .shop-content {
+    padding: 14px;
+  }
+
+  /* tabs hide mobile */
+  .shop-tabs {
+    display: none;
+  }
+
+  /* topbar row already flex row (filter left, sort right) */
+  .shop-topbar-row {
+    gap: 12px;
+  }
+
+  .sort-select-wrap {
+    min-width: 150px;
+  }
+
+  /* sidebar becomes left drawer */
+  .shop-filters {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 80%;
+    max-width: 320px;
+    height: 100vh;
+    border-right: 1px solid #f0f0f0;
+    border-bottom: none;
+    padding: 16px 12px 18px 12px;
+    background: #faf9f6;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    max-height: none;
+  }
+
+  .shop-filters.open {
+    transform: translateX(0);
+  }
+
+  .shop-filters-header-mobile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* products 2–2 */
+  .shop-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* 520 ke niche bhi 2–2 hi */
+@media (max-width: 520px) {
+  .shop-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }

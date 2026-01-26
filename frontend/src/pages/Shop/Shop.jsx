@@ -81,7 +81,8 @@ const FILTER_CONFIG = [
   { label: "RATING", type: "rating", options: RATING_OPTIONS },
 ];
 
-const BACKEND_URL = "http://localhost:4000";
+const BACKEND_URL =
+  import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
 
 const safeString = (value) => {
   if (value == null) return "";
@@ -105,21 +106,22 @@ const ProductImageSlider = ({
   const dispatch = useDispatch();
 
   const { wishlistItems = [] } = useSelector(
-    (state) => state.wishlist || { wishlistItems: [] },
+    (state) => state.wishlist || { wishlistItems: [] }
   );
   const isInWishlist =
     Array.isArray(wishlistItems) &&
     wishlistItems.some((item) => item?.product === productId);
 
   useEffect(() => {
-    let interval;
-    if (isHovered && Array.isArray(images) && images.length > 1) {
-      interval = setInterval(() => {
-        setCurrentImgIndex((prev) => (prev + 1) % images.length);
-      }, 1000);
-    } else {
-      setCurrentImgIndex(0);
+    if (!(isHovered && Array.isArray(images) && images.length > 1)) {
+      // No hover or only one image: do nothing, keep current index
+      return;
     }
+
+    const interval = setInterval(() => {
+      setCurrentImgIndex((prev) => (prev + 1) % images.length);
+    }, 1000);
+
     return () => clearInterval(interval);
   }, [isHovered, images]);
 
@@ -154,15 +156,21 @@ const ProductImageSlider = ({
         name,
         price,
         image: getImageUrl(images[0]),
-      }),
+      })
     );
   };
 
   return (
     <div
       className="shop-card-img-wrap"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => {
+        setIsHovered(true);
+        setCurrentImgIndex(0);
+      }}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        setCurrentImgIndex(0);
+      }}
     >
       <img
         src={currentSrc}
@@ -211,13 +219,13 @@ function Shop() {
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [selectedColors, setSelectedColors] = useState([]);
   const [selectedRatings, setSelectedRatings] = useState([]);
-  const [activeTab, setActiveTab] = useState("ALL"); // 🔥 TOP TABS STATE
+  const [activeTab, setActiveTab] = useState("ALL");
   const [sort, setSort] = useState("popular");
 
   useEffect(() => {
     const initFilters = FILTER_CONFIG.reduce(
       (acc, f) => ({ ...acc, [f.label]: false }),
-      {},
+      {}
     );
     setOpenFilters(initFilters);
   }, []);
@@ -247,7 +255,6 @@ function Shop() {
     setOpenFilters((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // 🔥 TOP TABS HANDLER
   const handleTabClick = (tab) => {
     setActiveTab(tab);
     toast.info(`Showing ${tab} products`);
@@ -257,19 +264,19 @@ function Shop() {
     setSelectedCategories((prev) =>
       prev.includes(category)
         ? prev.filter((c) => c !== category)
-        : [...prev, category],
+        : [...prev, category]
     );
   };
 
   const handleSizeToggle = (size) => {
     setSelectedSizes((prev) =>
-      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size],
+      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
     );
   };
 
   const handleColorToggle = (color) => {
     setSelectedColors((prev) =>
-      prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color],
+      prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color]
     );
   };
 
@@ -277,7 +284,7 @@ function Shop() {
     setSelectedRatings((prev) =>
       prev.includes(rating)
         ? prev.filter((r) => r !== rating)
-        : [...prev, rating],
+        : [...prev, rating]
     );
   };
 
@@ -285,11 +292,9 @@ function Shop() {
     setPriceRange([0, parseInt(e.target.value) || 5000]);
   };
 
-  // 🔥 FIXED FILTERING - WORKING CATEGORY TABS + SIDE FILTERS
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
       try {
-        // 🔥 TOP TABS FILTER (PRIORITY 1)
         if (activeTab !== "ALL") {
           const productText =
             safeString(product.category) + " " + safeString(product.name);
@@ -298,45 +303,40 @@ function Shop() {
           }
         }
 
-        // Side Category filter
         if (selectedCategories.length > 0) {
           const productText =
             safeString(product.category) + " " + safeString(product.name);
           const matchesCategory = selectedCategories.some((cat) =>
-            productText.includes(safeString(cat)),
+            productText.includes(safeString(cat))
           );
           if (!matchesCategory) return false;
         }
 
-        // Price filter
         const productPrice = safeNumber(product.price);
         if (productPrice < priceRange[0] || productPrice > priceRange[1]) {
           return false;
         }
 
-        // Size filter
         if (selectedSizes.length > 0) {
           const productSizes = Array.isArray(product.availableSizes)
             ? product.availableSizes.map(safeString)
             : safeString(product.size).split(",");
           const matchesSize = selectedSizes.some((size) =>
-            productSizes.some((ps) => ps.includes(safeString(size))),
+            productSizes.some((ps) => ps.includes(safeString(size)))
           );
           if (!matchesSize) return false;
         }
 
-        // Color filter
         if (selectedColors.length > 0) {
           const productColors = Array.isArray(product.colors)
             ? product.colors.map(safeString)
             : safeString(product.color).split(",");
           const matchesColor = selectedColors.some((color) =>
-            productColors.some((pc) => pc.includes(safeString(color))),
+            productColors.some((pc) => pc.includes(safeString(color)))
           );
           if (!matchesColor) return false;
         }
 
-        // Rating filter
         if (selectedRatings.length > 0) {
           const productRating = safeNumber(product.ratings || product.rating);
           const matchesRating = selectedRatings.some((rating) => {
@@ -444,7 +444,9 @@ function Shop() {
                       {f.options.slice(0, 9).map((size) => (
                         <button
                           key={size}
-                          className={`size-chip ${selectedSizes.includes(size) ? "active" : ""}`}
+                          className={`size-chip ${
+                            selectedSizes.includes(size) ? "active" : ""
+                          }`}
                           onClick={() => handleSizeToggle(size)}
                         >
                           {size}
@@ -460,7 +462,9 @@ function Shop() {
                     {f.options.map((color) => (
                       <button
                         key={color}
-                        className={`color-chip ${selectedColors.includes(color) ? "active" : ""}`}
+                        className={`color-chip ${
+                          selectedColors.includes(color) ? "active" : ""
+                        }`}
                         style={{ backgroundColor: color.toLowerCase() }}
                         onClick={() => handleColorToggle(color)}
                       />
@@ -473,7 +477,9 @@ function Shop() {
                     {f.options.map((rating) => (
                       <button
                         key={rating}
-                        className={`rating-chip ${selectedRatings.includes(rating) ? "active" : ""}`}
+                        className={`rating-chip ${
+                          selectedRatings.includes(rating) ? "active" : ""
+                        }`}
                         onClick={() => handleRatingToggle(rating)}
                       >
                         {rating}
@@ -498,12 +504,13 @@ function Shop() {
 
       <main className="shop-content">
         <div className="shop-top-row">
-          {/* 🔥 WORKING CATEGORY TABS */}
           <div className="shop-tabs">
             {CATEGORY_TABS.map((tab) => (
               <button
                 key={tab}
-                className={`shop-tab-btn ${activeTab === tab ? "active" : ""}`}
+                className={`shop-tab-btn ${
+                  activeTab === tab ? "active" : ""
+                }`}
                 onClick={() => handleTabClick(tab)}
               >
                 {tab}
@@ -515,7 +522,10 @@ function Shop() {
             <label className="sort-label">
               Sort
               <div className="sort-select-wrap">
-                <select value={sort} onChange={(e) => setSort(e.target.value)}>
+                <select
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value)}
+                >
                   <option value="popular">Popular</option>
                   <option value="new">NEW</option>
                   <option value="high-low">Price: High to low</option>
@@ -536,9 +546,9 @@ function Shop() {
           </div>
         ) : (
           <div className="shop-grid">
-            {sortedProducts.map((p) => (
+            {sortedProducts.map((p, index) => (
               <Link
-                key={p._id || p.id || Math.random().toString()}
+                key={p._id || p.id || `product-${index}`}
                 to={`/product/${p._id || p.id || "product"}`}
                 className="shop-card"
               >
@@ -549,7 +559,9 @@ function Shop() {
                   productId={p._id || p.id || ""}
                 />
                 <div className="shop-card-info">
-                  <div className="shop-card-name">{p.name || "Product"}</div>
+                  <div className="shop-card-name">
+                    {p.name || "Product"}
+                  </div>
                   <div className="shop-card-price">€{p.price || 0}</div>
                 </div>
               </Link>

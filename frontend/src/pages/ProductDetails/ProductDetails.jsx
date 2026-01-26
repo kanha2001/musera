@@ -16,12 +16,11 @@ import {
   Star,
   Truck,
   ChevronDown,
-  ChevronUp,
-  Heart,
 } from "lucide-react";
 import { addItemToCart } from "../../features/cartSlice";
 
-const BACKEND_URL = "http://localhost:4000";
+const BACKEND_URL =
+  import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
 
 const getImageUrl = (img) => {
   if (!img || !img.url)
@@ -54,6 +53,7 @@ const ProductDetails = () => {
   const [openSection, setOpenSection] = useState("desc");
   const [showFullTitle, setShowFullTitle] = useState(false);
 
+  // Load product + list
   useEffect(() => {
     if (id) {
       dispatch(getProductDetails(id));
@@ -61,35 +61,45 @@ const ProductDetails = () => {
     }
   }, [dispatch, id]);
 
+  // Derive local view state from product (no extra re-fetch)
   useEffect(() => {
-    if (product && product._id) {
-      if (product.images && product.images.length > 0) {
-        const firstValidImg = product.images.find((img) => img?.url);
-        if (firstValidImg) {
-          setActiveImg(getImageUrl(firstValidImg));
+    if (!product || !product._id) return;
+
+    if (product.images && product.images.length > 0) {
+      const firstValidImg = product.images.find((img) => img?.url);
+      if (firstValidImg) {
+        const url = getImageUrl(firstValidImg);
+        if (url !== activeImg) {
+          setActiveImg(url);
         }
       }
-      if (product.colors && product.colors.length > 0) {
+    }
+
+    if (product.colors && product.colors.length > 0) {
+      if (!activeColor) {
         setActiveColor(product.colors[0]);
       }
     }
-  }, [product]);
+  }, [product, activeImg, activeColor]);
 
+  // Error + review success side-effects
   useEffect(() => {
     if (error) {
       toast.error(error);
       dispatch(clearErrors());
     }
+  }, [error, dispatch]);
+
+  useEffect(() => {
     if (success) {
       toast.success("Review Submitted Successfully!");
       dispatch(resetReviewSuccess());
-      dispatch(getProductDetails(id));
+      // Sirf local form reset, koi extra fetch nahi
       setRating(0);
       setComment("");
     }
-  }, [error, success, dispatch, id]);
+  }, [success, dispatch]);
 
-  // 🔥 AMAZON RATING CALCULATION
   const getAvgRating = () => {
     if (!product.reviews || product.reviews.length === 0) return 0;
     const total = product.reviews.reduce((acc, rev) => acc + rev.rating, 0);
@@ -112,7 +122,6 @@ const ProductDetails = () => {
   };
 
   const addToCartHandler = () => {
-    // 🔥 CHECK SIZE FIRST
     if (product.sizes && product.sizes.length > 0 && !selectedSize) {
       toast.error("Please select a size first!");
       return;
@@ -122,7 +131,6 @@ const ProductDetails = () => {
       selectedSize && product.sizes?.find((s) => s.size === selectedSize);
     const availableStock = sizeStock ? sizeStock.stock : product.stock;
 
-    // 🔥 OUT OF STOCK CHECK
     if (availableStock < 1) {
       toast.error("This product is out of stock!");
       return;
@@ -163,14 +171,6 @@ const ProductDetails = () => {
     ? allProducts.filter((item) => item._id !== id).slice(0, 4)
     : [];
 
-  // 🔥 SIZE STOCK CHECK (for individual sizes)
-  const getSizeStock = (size) => {
-    return (
-      product.sizes?.find((s) => s.size === size)?.stock || product.stock || 0
-    );
-  };
-
-  // 🔥 GENERAL OUT OF STOCK CHECK (for banner)
   const isOutOfStock = () => {
     if (product.sizes && product.sizes.length > 0) {
       return product.sizes.every((s) => s.stock === 0);
@@ -178,7 +178,6 @@ const ProductDetails = () => {
     return product.stock <= 0;
   };
 
-  // 🔥 BUTTON DISABLED LOGIC
   const isAddToCartDisabled = () => {
     if (product.sizes && product.sizes.length > 0 && !selectedSize) return true;
     const sizeStock =
@@ -213,7 +212,9 @@ const ProductDetails = () => {
                   return (
                     <button
                       key={`thumb-${i}`}
-                      className={`prd-thumb-btn ${activeImg === url ? "active" : ""}`}
+                      className={`prd-thumb-btn ${
+                        activeImg === url ? "active" : ""
+                      }`}
                       onClick={() => setActiveImg(url)}
                     >
                       <img src={url} alt="thumb" />
@@ -223,10 +224,9 @@ const ProductDetails = () => {
             </div>
           </div>
 
-          {/* RIGHT: Info Card + AMAZON RATING */}
+          {/* RIGHT: Info Card + Ratings */}
           <div className="prd-col-right">
             <div className="prd-info-card">
-              {/* Title */}
               <h1
                 className="prd-title"
                 onClick={() => setShowFullTitle(!showFullTitle)}
@@ -237,7 +237,6 @@ const ProductDetails = () => {
                   : product.name.slice(0, 60) + "..."}
               </h1>
 
-              {/* 🔥 AMAZON RATING */}
               <div className="prd-rating-main">
                 <div className="prd-stars-main">
                   {[...Array(5)].map((_, i) => (
@@ -255,10 +254,8 @@ const ProductDetails = () => {
                 </span>
               </div>
 
-              {/* Price */}
               <div className="prd-price">₹{product.price}</div>
 
-              {/* Colors */}
               {product.colors && product.colors.length > 0 && (
                 <div className="prd-block">
                   <div className="prd-block-head">
@@ -269,7 +266,9 @@ const ProductDetails = () => {
                     {product.colors.map((c, i) => (
                       <button
                         key={`color-${i}`}
-                        className={`prd-swatch ${activeColor === c ? "active" : ""} ${c.toLowerCase()}`}
+                        className={`prd-swatch ${
+                          activeColor === c ? "active" : ""
+                        } ${c.toLowerCase()}`}
                         onClick={() => setActiveColor(c)}
                       />
                     ))}
@@ -277,7 +276,6 @@ const ProductDetails = () => {
                 </div>
               )}
 
-              {/* Sizes */}
               {product.sizes && product.sizes.length > 0 && (
                 <div className="prd-block">
                   <div className="prd-block-head">
@@ -288,7 +286,9 @@ const ProductDetails = () => {
                     {product.sizes.map((sizeObj, i) => (
                       <button
                         key={`size-${sizeObj.size}-${i}`}
-                        className={`prd-pill ${selectedSize === sizeObj.size ? "active" : ""} ${sizeObj.stock === 0 ? "out-of-stock" : ""}`}
+                        className={`prd-pill ${
+                          selectedSize === sizeObj.size ? "active" : ""
+                        } ${sizeObj.stock === 0 ? "out-of-stock" : ""}`}
                         onClick={() => setSelectedSize(sizeObj.size)}
                         disabled={sizeObj.stock === 0}
                       >
@@ -303,7 +303,6 @@ const ProductDetails = () => {
                 </div>
               )}
 
-              {/* 🔥 BUTTON ALWAYS VISIBLE - DISABLED WHEN OUT OF STOCK */}
               <div className="prd-action-row">
                 <div className="prd-qty-control">
                   <button
@@ -321,7 +320,9 @@ const ProductDetails = () => {
                   </button>
                 </div>
                 <button
-                  className={`prd-add-btn ${isAddToCartDisabled() ? "out-of-stock" : ""}`}
+                  className={`prd-add-btn ${
+                    isAddToCartDisabled() ? "out-of-stock" : ""
+                  }`}
                   onClick={addToCartHandler}
                 >
                   {isAddToCartDisabled() ? "OUT OF STOCK" : "ADD TO CART"}
@@ -332,10 +333,11 @@ const ProductDetails = () => {
                 <Truck size={16} /> Free delivery on orders over ₹999
               </div>
 
-              {/* Accordion */}
               <div className="prd-accordion">
                 <div
-                  className={`prd-acc-item ${openSection === "desc" ? "open" : ""}`}
+                  className={`prd-acc-item ${
+                    openSection === "desc" ? "open" : ""
+                  }`}
                 >
                   <button
                     className="prd-acc-head"
@@ -351,7 +353,9 @@ const ProductDetails = () => {
                   )}
                 </div>
                 <div
-                  className={`prd-acc-item ${openSection === "fit" ? "open" : ""}`}
+                  className={`prd-acc-item ${
+                    openSection === "fit" ? "open" : ""
+                  }`}
                 >
                   <button
                     className="prd-acc-head"
@@ -397,7 +401,10 @@ const ProductDetails = () => {
               onChange={(e) => setComment(e.target.value)}
               maxLength={150}
             />
-            <button className="prd-submit-review" onClick={submitReviewHandler}>
+            <button
+              className="prd-submit-review"
+              onClick={submitReviewHandler}
+            >
               SUBMIT REVIEW
             </button>
           </div>

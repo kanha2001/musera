@@ -1,14 +1,19 @@
 import React, { useEffect } from "react";
-import { useSearchParams, useLocation } from "react-router-dom";
+import { useSearchParams, useLocation, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getProducts } from "../../features/productSlice";
-import { Link } from "react-router-dom";
+import { addItemToCart } from "../../features/cartSlice";
 import heroBg from "../Assets/hero6.png";
 import "./Store.css";
+import { toast } from "react-toastify";
+
+const BACKEND_URL =
+  import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
 
 function Store() {
   const dispatch = useDispatch();
   const { loading, products } = useSelector((state) => state.products);
+  const { cartItems } = useSelector((state) => state.cart);
   const [searchParams] = useSearchParams();
   const location = useLocation();
 
@@ -45,7 +50,7 @@ function Store() {
 
   const getPageTitle = () => {
     if (category) return `${category.toUpperCase()} Collection`;
-    if (filter === "latest") return "✨ New Arrivals"; // 🔥 CHANGED TO ✨
+    if (filter === "latest") return "✨ New Arrivals";
     if (filter === "popular") return "⭐ Best Sellers";
     if (filter === "sale") return "🔥 Sale";
     return "🛒 Our Store";
@@ -56,19 +61,44 @@ function Store() {
       return "https://via.placeholder.com/300x400/f0ebe5/999?text=No+Image";
     }
 
-    if (typeof images[0] === "string" && images[0].startsWith("http")) {
-      return images[0];
+    const first = images[0];
+
+    if (typeof first === "string" && first.startsWith("http")) {
+      return first;
     }
 
-    if (typeof images[0] === "string") {
-      return `/images/${images[0]}`;
+    if (typeof first === "string") {
+      if (first.startsWith("/uploads")) {
+        return `${BACKEND_URL}${first}`;
+      }
+      return first;
     }
 
-    if (images[0]?.url) {
-      return images[0].url;
+    if (first?.url) {
+      if (first.url.startsWith("/uploads")) {
+        return `${BACKEND_URL}${first.url}`;
+      }
+      return first.url;
     }
 
     return "https://via.placeholder.com/300x400/f0ebe5/999?text=No+Image";
+  };
+
+  const isInCart = (productId) =>
+    cartItems.some((item) => item.product === productId);
+
+  const handleAddToCart = (product) => {
+    const image = getProductImage(product.images);
+    const cartItem = {
+      product: product._id,
+      name: product.name,
+      price: product.price,
+      quantity: 1,
+      image,
+      stock: product.stock || 10,
+    };
+    dispatch(addItemToCart(cartItem));
+    toast.success(`${product.name} added to cart! 🛒`);
   };
 
   if (loading) {
@@ -82,7 +112,7 @@ function Store() {
 
   return (
     <div className="boy-page">
-      {/* 🔥 HERO SECTION */}
+      {/* HERO */}
       <header className="boy-hero">
         <div className="boy-hero-overlay"></div>
         <img src={heroBg} alt="Store" className="boy-hero-bg-img" />
@@ -94,8 +124,9 @@ function Store() {
         </div>
       </header>
 
-      {/* 🔥 FILTERS SECTION */}
+      {/* CONTENT */}
       <section className="boy-content">
+        {/* FILTER BUTTONS */}
         <div className="store-filters">
           <Link
             to="/store?filter=latest"
@@ -123,7 +154,7 @@ function Store() {
           </Link>
         </div>
 
-        {/* 🔥 PRODUCTS GRID */}
+        {/* GRID */}
         {filteredProducts.length === 0 ? (
           <div className="empty-state">
             <div className="empty-content">
@@ -138,64 +169,75 @@ function Store() {
         ) : (
           <div className="boy-grid">
             {filteredProducts.map((product) => (
-              <Link
-                key={product._id}
-                to={`/product/${product._id}`}
-                className="boy-card-link"
-              >
-                <div className="boy-card">
-                  <div className="boy-card-img-wrap">
-                    <img
-                      src={getProductImage(product.images)}
-                      alt={product.name}
-                      onError={(e) => {
-                        e.target.src =
-                          "https://via.placeholder.com/300x400/f0ebe5/999?text=No+Image";
-                      }}
-                    />
-                    {product.discount && product.discount > 0 && (
-                      <div className="discount-badge">
-                        -{Math.round(product.discount)}%
-                      </div>
-                    )}
-                    <button className="quick-view-btn">Quick View</button>
-                  </div>
-
-                  <div className="boy-card-details">
-                    <h3 className="boy-card-name">{product.name}</h3>
-
-                    <div className="product-price">
-                      {product.discount && product.discount > 0 ? (
-                        <>
-                          <span className="original-price">
-                            €{product.price.toLocaleString()}
-                          </span>
-                          <span className="discounted-price">
-                            €
-                            {(
-                              product.price *
-                              (1 - product.discount / 100)
-                            ).toLocaleString()}
-                          </span>
-                        </>
-                      ) : (
-                        <span className="boy-card-price">
-                          €{product.price.toLocaleString()}
-                        </span>
+              <div key={product._id} className="boy-card-wrapper">
+                <Link
+                  to={`/product/${product._id}`}
+                  className="boy-card-link"
+                >
+                  <div className="boy-card">
+                    <div className="boy-card-img-wrap">
+                      <img
+                        src={getProductImage(product.images)}
+                        alt={product.name}
+                        onError={(e) => {
+                          e.target.src =
+                            "https://via.placeholder.com/300x400/f0ebe5/999?text=No+Image";
+                        }}
+                      />
+                      {product.discount && product.discount > 0 && (
+                        <div className="discount-badge">
+                          -{Math.round(product.discount)}%
+                        </div>
                       )}
+                      <button className="quick-view-btn">Quick View</button>
                     </div>
 
-                    {filter === "popular" && product.ratings && (
-                      <div className="product-rating">
-                        ★ {product.ratings.toFixed(1)}
-                        <span className="reviews-count">
-                          ({product.numOfReviews || 0})
-                        </span>
+                    <div className="boy-card-details">
+                      <h3 className="boy-card-name">{product.name}</h3>
+
+                      <div className="product-price">
+                        {product.discount && product.discount > 0 ? (
+                          <>
+                            <span className="original-price">
+                              €{product.price.toLocaleString()}
+                            </span>
+                            <span className="discounted-price">
+                              €
+                              {(
+                                product.price *
+                                (1 - product.discount / 100)
+                              ).toLocaleString()}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="boy-card-price">
+                            €{product.price.toLocaleString()}
+                          </span>
+                        )}
                       </div>
-                    )}
+
+                      {filter === "popular" && product.ratings && (
+                        <div className="product-rating">
+                          ★ {product.ratings.toFixed(1)}
+                          <span className="reviews-count">
+                            ({product.numOfReviews || 0})
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+
+                {/* ADD TO CART BUTTON like screenshot */}
+                <button
+                  className={`store-add-btn ${
+                    isInCart(product._id) ? "in-cart" : ""
+                  }`}
+                  onClick={() => handleAddToCart(product)}
+                >
+                  {isInCart(product._id) ? "✅ IN CART" : "ADD TO CART"}
+                </button>
+              </div>
             ))}
           </div>
         )}

@@ -92,7 +92,7 @@
   padding: 60px 24px 100px;
 }
 
-/* 🔥 FILTER BUTTONS */
+/* FILTER BUTTONS */
 .store-filters {
   display: flex;
   gap: 12px;
@@ -121,14 +121,21 @@
   transform: translateY(-2px);
 }
 
-/* --- PRODUCT GRID --- */
+/* PRODUCT GRID */
 .boy-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 20px;
 }
 
-/* --- PRODUCT CARD --- */
+/* Wrapper so button is outside card like screenshot */
+.boy-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* PRODUCT CARD */
 .boy-card {
   background: var(--boy-card-bg);
   border-radius: 2px;
@@ -139,7 +146,7 @@
     transform 0.3s ease;
   position: relative;
   overflow: hidden;
-  height: 380px;
+  height: 320px;
 }
 
 .boy-card:hover {
@@ -151,7 +158,7 @@
 .boy-card-img-wrap {
   position: relative;
   width: 100%;
-  height: 260px;
+  height: 220px;
   background-color: #f0ebe5;
   overflow: hidden;
   cursor: pointer;
@@ -168,7 +175,7 @@
   transform: scale(1.05);
 }
 
-/* 🔥 DISCOUNT BADGE */
+/* DISCOUNT BADGE */
 .discount-badge {
   position: absolute;
   top: 12px;
@@ -208,7 +215,7 @@
 
 /* Info Area */
 .boy-card-details {
-  padding: 16px;
+  padding: 12px 12px 10px;
   text-align: center;
   flex-grow: 1;
   display: flex;
@@ -233,13 +240,13 @@
   color: var(--boy-accent);
 }
 
-/* 🔥 PRICE SECTION */
+/* PRICE */
 .product-price {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   flex-wrap: wrap;
 }
 
@@ -277,10 +284,34 @@
   text-decoration: none;
   color: inherit;
   display: block;
-  height: 100%;
 }
 
-/* --- RESPONSIVE DESIGN --- */
+/* ADD TO CART button (same style as screenshot) */
+.store-add-btn {
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background: #3b2a1f;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.store-add-btn:hover {
+  background: #24170f;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 10px rgba(36, 23, 15, 0.4);
+}
+
+.store-add-btn.in-cart {
+  background: #0b6834;
+}
+
+/* RESPONSIVE */
 @media (max-width: 768px) {
   .boy-hero {
     height: 300px;
@@ -302,7 +333,7 @@
   }
 
   .boy-card {
-    height: 320px;
+    height: 300px;
   }
 
   .boy-card-img-wrap {
@@ -340,11 +371,11 @@
   }
 
   .boy-card {
-    height: 360px;
+    height: 320px;
   }
 
   .boy-card-img-wrap {
-    height: 240px;
+    height: 220px;
   }
 }
 

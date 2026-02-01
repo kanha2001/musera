@@ -109,7 +109,7 @@ const ProductImageSlider = ({
   const dispatch = useDispatch();
 
   const { wishlistItems = [] } = useSelector(
-    (state) => state.wishlist || { wishlistItems: [] },
+    (state) => state.wishlist || { wishlistItems: [] }
   );
   const isInWishlist =
     Array.isArray(wishlistItems) &&
@@ -156,13 +156,13 @@ const ProductImageSlider = ({
         name,
         price,
         image: getImageUrl(images[0]),
-      }),
+      })
     );
   };
 
   return (
     <div
-      className="shop-card-img-wrap"
+      className="new-shop-card-img-wrap"
       onMouseEnter={() => {
         setIsHovered(true);
         setCurrentImgIndex(0);
@@ -181,7 +181,7 @@ const ProductImageSlider = ({
         }}
       />
       <button
-        className={`shop-heart ${isInWishlist ? "active" : ""}`}
+        className={`new-shop-heart ${isInWishlist ? "active" : ""}`}
         onClick={handleWishlistClick}
       >
         <Heart
@@ -192,11 +192,11 @@ const ProductImageSlider = ({
         />
       </button>
       {isHovered && Array.isArray(images) && images.length > 1 && (
-        <div className="slider-dots">
+        <div className="new-slider-dots">
           {images.slice(0, 5).map((_, idx) => (
             <span
               key={idx}
-              className={idx === currentImgIndex ? "dot active" : "dot"}
+              className={idx === currentImgIndex ? "new-dot active" : "new-dot"}
             />
           ))}
         </div>
@@ -222,13 +222,12 @@ function Shop() {
   const [activeTab, setActiveTab] = useState("ALL");
   const [sort, setSort] = useState("popular");
 
-  // mobile filter drawer
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
   useEffect(() => {
     const initFilters = FILTER_CONFIG.reduce(
       (acc, f) => ({ ...acc, [f.label]: false }),
-      {},
+      {}
     );
     setOpenFilters(initFilters);
   }, []);
@@ -267,19 +266,19 @@ function Shop() {
     setSelectedCategories((prev) =>
       prev.includes(category)
         ? prev.filter((c) => c !== category)
-        : [...prev, category],
+        : [...prev, category]
     );
   };
 
   const handleSizeToggle = (size) => {
     setSelectedSizes((prev) =>
-      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size],
+      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
     );
   };
 
   const handleColorToggle = (color) => {
     setSelectedColors((prev) =>
-      prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color],
+      prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color]
     );
   };
 
@@ -287,7 +286,7 @@ function Shop() {
     setSelectedRatings((prev) =>
       prev.includes(rating)
         ? prev.filter((r) => r !== rating)
-        : [...prev, rating],
+        : [...prev, rating]
     );
   };
 
@@ -310,7 +309,7 @@ function Shop() {
           const productText =
             safeString(product.category) + " " + safeString(product.name);
           const matchesCategory = selectedCategories.some((cat) =>
-            productText.includes(safeString(cat)),
+            productText.includes(safeString(cat))
           );
           if (!matchesCategory) return false;
         }
@@ -325,7 +324,7 @@ function Shop() {
             ? product.availableSizes.map(safeString)
             : safeString(product.size).split(",");
           const matchesSize = selectedSizes.some((size) =>
-            productSizes.some((ps) => ps.includes(safeString(size))),
+            productSizes.some((ps) => ps.includes(safeString(size)))
           );
           if (!matchesSize) return false;
         }
@@ -335,7 +334,7 @@ function Shop() {
             ? product.colors.map(safeString)
             : safeString(product.color).split(",");
           const matchesColor = selectedColors.some((color) =>
-            productColors.some((pc) => pc.includes(safeString(color))),
+            productColors.some((pc) => pc.includes(safeString(color)))
           );
           if (!matchesColor) return false;
         }
@@ -390,15 +389,17 @@ function Shop() {
   };
 
   return (
-    <div className="shop-page">
+    <div className="new-shop-page">
       {/* SIDEBAR / DRAWER */}
       <aside
-        className={`shop-filters ${isMobileFiltersOpen ? "open" : ""}`}
+        className={`new-shop-filters ${
+          isMobileFiltersOpen ? "new-open" : ""
+        }`}
       >
-        <div className="shop-filters-header-mobile">
+        <div className="new-shop-filters-header-mobile">
           <span>Filters</span>
           <button
-            className="shop-filters-close-btn"
+            className="new-shop-filters-close-btn"
             onClick={() => setIsMobileFiltersOpen(false)}
           >
             ✕
@@ -406,23 +407,26 @@ function Shop() {
         </div>
 
         {FILTER_CONFIG.map((f) => (
-          <div key={f.label} className="filter-section">
+          <div key={f.label} className="new-filter-section">
             <button
-              className="filter-header"
+              className="new-filter-header"
               onClick={() => toggleFilter(f.label)}
             >
               <span>{f.label}</span>
-              <span className="filter-toggle">
+              <span className="new-filter-toggle">
                 {openFilters[f.label] ? "−" : "+"}
               </span>
             </button>
 
             {openFilters[f.label] && (
-              <div className="filter-body">
+              <div className="new-filter-body">
                 {f.type === "category" && (
-                  <div className="scrollable-category-list">
+                  <div className="new-scrollable-category-list">
                     {f.options.map((category) => (
-                      <label key={category} className="filter-checkbox">
+                      <label
+                        key={category}
+                        className="new-filter-checkbox"
+                      >
                         <input
                           type="checkbox"
                           checked={selectedCategories.includes(category)}
@@ -435,8 +439,8 @@ function Shop() {
                 )}
 
                 {f.type === "range" && (
-                  <div className="price-range-filter">
-                    <div className="range-display">
+                  <div className="new-price-range-filter">
+                    <div className="new-range-display">
                       €{priceRange[1].toLocaleString()}
                     </div>
                     <input
@@ -445,9 +449,9 @@ function Shop() {
                       max={f.max}
                       value={priceRange[1]}
                       onChange={handlePriceChange}
-                      className="price-slider"
+                      className="new-price-slider"
                     />
-                    <div className="range-labels">
+                    <div className="new-range-labels">
                       <span>€0</span>
                       <span>€{f.max.toLocaleString()}</span>
                     </div>
@@ -456,12 +460,12 @@ function Shop() {
 
                 {f.type === "size" && (
                   <>
-                    <div className="size-grid">
+                    <div className="new-size-grid">
                       {f.options.slice(0, 9).map((size) => (
                         <button
                           key={size}
-                          className={`size-chip ${
-                            selectedSizes.includes(size) ? "active" : ""
+                          className={`new-size-chip ${
+                            selectedSizes.includes(size) ? "new-active" : ""
                           }`}
                           onClick={() => handleSizeToggle(size)}
                         >
@@ -469,17 +473,19 @@ function Shop() {
                         </button>
                       ))}
                     </div>
-                    <button className="size-view-more">View More</button>
+                    <button className="new-size-view-more">
+                      View More
+                    </button>
                   </>
                 )}
 
                 {f.type === "color" && (
-                  <div className="color-grid">
+                  <div className="new-color-grid">
                     {f.options.map((color) => (
                       <button
                         key={color}
-                        className={`color-chip ${
-                          selectedColors.includes(color) ? "active" : ""
+                        className={`new-color-chip ${
+                          selectedColors.includes(color) ? "new-active" : ""
                         }`}
                         style={{ backgroundColor: color.toLowerCase() }}
                         onClick={() => handleColorToggle(color)}
@@ -489,12 +495,12 @@ function Shop() {
                 )}
 
                 {f.type === "rating" && (
-                  <div className="rating-grid">
+                  <div className="new-rating-grid">
                     {f.options.map((rating) => (
                       <button
                         key={rating}
-                        className={`rating-chip ${
-                          selectedRatings.includes(rating) ? "active" : ""
+                        className={`new-rating-chip ${
+                          selectedRatings.includes(rating) ? "new-active" : ""
                         }`}
                         onClick={() => handleRatingToggle(rating)}
                       >
@@ -508,12 +514,12 @@ function Shop() {
           </div>
         ))}
 
-        <div className="filter-footer">
-          <button className="filter-clear" onClick={clearAllFilters}>
+        <div className="new-filter-footer">
+          <button className="new-filter-clear" onClick={clearAllFilters}>
             CLEAR
           </button>
           <button
-            className="filter-apply"
+            className="new-filter-apply"
             onClick={() => {
               applyFilters();
               setIsMobileFiltersOpen(false);
@@ -525,22 +531,22 @@ function Shop() {
       </aside>
 
       {/* MAIN CONTENT */}
-      <main className="shop-content">
+      <main className="new-shop-content">
         {/* TOP BAR: FILTER + SORT */}
-        <div className="shop-topbar-row">
-          <div className="shop-mobile-topbar">
+        <div className="new-shop-topbar-row">
+          <div className="new-shop-mobile-topbar">
             <button
-              className="shop-mobile-filter-btn"
+              className="new-shop-mobile-filter-btn"
               onClick={() => setIsMobileFiltersOpen(true)}
             >
               FILTERS
             </button>
           </div>
 
-          <div className="shop-sort">
-            <label className="sort-label">
+          <div className="new-shop-sort">
+            <label className="new-sort-label">
               Sort
-              <div className="sort-select-wrap">
+              <div className="new-sort-select-wrap">
                 <select
                   value={sort}
                   onChange={(e) => setSort(e.target.value)}
@@ -550,20 +556,20 @@ function Shop() {
                   <option value="high-low">Price: High to low</option>
                   <option value="low-high">Price: low to high</option>
                 </select>
-                <span className="sort-arrow">▾</span>
+                <span className="new-sort-arrow">▾</span>
               </div>
             </label>
           </div>
         </div>
 
         {/* DESKTOP TABS */}
-        <div className="shop-top-row">
-          <div className="shop-tabs">
+        <div className="new-shop-top-row">
+          <div className="new-shop-tabs">
             {CATEGORY_TABS.map((tab) => (
               <button
                 key={tab}
-                className={`shop-tab-btn ${
-                  activeTab === tab ? "active" : ""
+                className={`new-shop-tab-btn ${
+                  activeTab === tab ? "new-active" : ""
                 }`}
                 onClick={() => handleTabClick(tab)}
               >
@@ -574,19 +580,19 @@ function Shop() {
         </div>
 
         {loading ? (
-          <div className="loading">Loading Products...</div>
+          <div className="new-loading">Loading Products...</div>
         ) : sortedProducts.length === 0 ? (
-          <div className="no-products">
+          <div className="new-no-products">
             <h3>No products found</h3>
             <p>Try adjusting your filters or tabs</p>
           </div>
         ) : (
-          <div className="shop-grid">
+          <div className="new-shop-grid">
             {sortedProducts.map((p, index) => (
               <Link
                 key={p._id || p.id || `product-${index}`}
                 to={`/product/${p._id || p.id || "product"}`}
-                className="shop-card"
+                className="new-shop-card"
               >
                 <ProductImageSlider
                   images={p.images || []}
@@ -594,11 +600,13 @@ function Shop() {
                   price={p.price || 0}
                   productId={p._id || p.id || ""}
                 />
-                <div className="shop-card-info">
-                  <div className="shop-card-name">
+                <div className="new-shop-card-info">
+                  <div className="new-shop-card-name">
                     {p.name || "Product"}
                   </div>
-                  <div className="shop-card-price">€{p.price || 0}</div>
+                  <div className="new-shop-card-price">
+                    €{p.price || 0}
+                  </div>
                 </div>
               </Link>
             ))}

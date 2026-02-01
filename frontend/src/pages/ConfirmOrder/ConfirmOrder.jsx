@@ -24,6 +24,17 @@ const ConfirmOrder = () => {
 
   const proceedToPayment = async () => {
     try {
+      // ⭐ 1) orderInfo ko sessionStorage me save karo
+      const orderInfo = {
+        cartItems,
+        shippingInfo,
+        subtotal,
+        shippingCharges,
+        tax,
+        totalPrice,
+      };
+      sessionStorage.setItem("orderInfo", JSON.stringify(orderInfo));
+
       const config = {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
@@ -31,6 +42,7 @@ const ConfirmOrder = () => {
 
       toast.info("Redirecting to Payment Gateway...");
 
+      // ⭐ 2) Stripe checkout session banao
       const { data } = await API.post(
         "/api/v1/payment/create-checkout-session",
         {
@@ -46,7 +58,7 @@ const ConfirmOrder = () => {
       );
 
       if (data.url) {
-        window.location.href = data.url;
+        window.location.href = data.url; // Stripe page
       } else {
         toast.error("Payment URL not received from server");
       }
@@ -82,7 +94,7 @@ const ConfirmOrder = () => {
               <p>Cart is Empty (Reloading...)</p>
             ) : (
               cartItems.map((item) => (
-                <div key={item.product} className="confirm-item-card">
+                <div key={`${item.product}-${item.size || "nosize"}`} className="confirm-item-card">
                   <img src={item.image} alt={item.name} />
                   <Link to={`/product/${item.product}`}>{item.name}</Link>
                   <span>

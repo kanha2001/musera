@@ -297,14 +297,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/success"
-          element={
-            <ProtectedRoute>
-              <Success />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/success" element={<Success />} />
       </Routes>
 
       <ToastContainer position="bottom-center" autoClose={3000} />

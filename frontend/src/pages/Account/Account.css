@@ -20,10 +20,10 @@
   flex: 1;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05); /* Soft Shadow */
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
   padding: 40px;
   border: 1px solid #f0f0f0;
-  overflow: hidden; /* Content overflow rokne ke liye */
+  overflow: hidden;
 }
 
 .account-heading {
@@ -254,7 +254,16 @@
   background: #333;
 }
 
-/* --- ORDERS TABLE --- */
+/* --- ORDERS TABLE (MyOrders.jsx) --- */
+.orders-container {
+  width: 100%;
+}
+
+.orders-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
 .orders-table {
   width: 100%;
   border-collapse: collapse;
@@ -274,6 +283,20 @@
   font-size: 14px;
   color: #333;
 }
+
+.order-list-image-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.order-list-img {
+  width: 42px;
+  height: 42px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
 .status-tag {
   padding: 4px 10px;
   border-radius: 20px;
@@ -312,7 +335,11 @@
   color: #777;
 }
 
-/* --- ORDER DETAILS --- */
+/* --- ORDER DETAILS OLD BASE --- */
+.order-details-container {
+  margin-top: 10px;
+}
+
 .order-section {
   margin-bottom: 25px;
   padding-bottom: 15px;
@@ -340,6 +367,12 @@
   font-weight: 600;
 }
 
+.order-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .order-item {
   display: flex;
   align-items: center;
@@ -363,6 +396,154 @@
   font-weight: 500;
 }
 
+/* --- EXTRA ORDER DETAILS NEW LOOK (ID, breakdown, status) --- */
+.od-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.od-id {
+  font-size: 13px;
+  color: #777;
+}
+
+.od-breakdown-box {
+  margin-top: 10px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  padding: 10px 12px;
+  background: #fafafa;
+}
+
+.od-break-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+.od-break-row.total {
+  font-weight: 700;
+  color: #111;
+  margin-top: 4px;
+}
+
+/* Order status pill */
+.od-status-pill {
+  display: inline-flex;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.od-status-pill.delivered {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+.od-status-pill.shipped {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+.od-status-pill.processing {
+  background: #fff8e1;
+  color: #f57c00;
+}
+
+/* --- MOBILE CARD VIEW FOR ORDERS (MyOrders mobile) --- */
+.orders-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.order-card {
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #eee;
+  padding: 12px 14px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
+}
+
+.order-card-top {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.order-card-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.order-card-main {
+  flex: 1;
+}
+
+.order-card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.order-card-label {
+  font-size: 12px;
+  color: #777;
+}
+
+.order-card-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+
+.inline-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.order-card-bottom {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.order-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+  color: #555;
+}
+
+.order-card-amount {
+  font-weight: 600;
+  color: #111;
+}
+
+.order-card-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 20px;
+  background: #111;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
 /* --- MOBILE RESPONSIVE --- */
 .mobile-header {
   display: none;
@@ -373,40 +554,57 @@
   border-bottom: 1px solid #eee;
 }
 
+.mobile-back-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid #ddd;
+  background: #fff;
+}
+
+@media (max-width: 768px) {
+  .mobile-header {
+    display: flex;
+  }
+}
+
+/* visibility helpers */
+.desktop-only {
+  display: block;
+}
+.mobile-only {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .account-wrapper {
     flex-direction: column;
     padding: 10px;
     gap: 15px;
     background: #f8f9fa;
+    min-height: auto;
   }
 
   .account-sidebar-area {
     width: 100%;
-    /* Display controlled by component prop */
+    flex: none;
   }
 
   .account-main-area {
-    padding: 20px;
-    border-radius: 0;
-    box-shadow: none;
+    padding: 16px;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
     background: #fff;
-    /* Display controlled by component prop */
+    overflow: visible;
   }
 
-  .mobile-header {
-    display: flex;
-  }
-
-  .mobile-back-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    background: #f0f0f0;
-    text-decoration: none;
+  .account-heading {
+    font-size: 18px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
   }
 
   .profile-header-card {
@@ -420,5 +618,27 @@
     width: 100%;
     margin-top: 15px;
     text-align: center;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+  .mobile-only {
+    display: block;
+  }
+
+  /* OrderDetails – breakdown box full width on mobile */
+  .od-breakdown-box {
+    margin-top: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .account-main-area {
+    padding: 14px;
+  }
+
+  .order-section h3 {
+    font-size: 15px;
   }
 }

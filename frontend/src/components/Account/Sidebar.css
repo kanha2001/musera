@@ -74,12 +74,23 @@
   font-weight: 600;
 }
 
+/* Admin dashboard special style (optional, thoda highlight) */
+.admin-dashboard-link {
+  margin-bottom: 4px;
+  border: 1px solid #f3f3f3;
+}
+.admin-dashboard-link:hover,
+.admin-dashboard-link.active {
+  border-color: #111;
+}
+
+/* Arrow only on mobile */
 .mobile-arrow {
-  display: none; /* Desktop par arrow nahi dikhega */
+  display: none;
 }
 
 .mobile-only-menu {
-  display: none; /* Desktop par extra links nahi dikhenge */
+  display: none;
 }
 
 /* Logout Specific */
@@ -112,7 +123,7 @@
     background: #fff;
     padding: 0;
     gap: 0;
-    margin-bottom: 15px; /* Separation between sections */
+    margin-bottom: 15px;
   }
 
   .sidebar-link {
@@ -123,11 +134,11 @@
   }
 
   .mobile-arrow {
-    display: block; /* Mobile par arrow dikhega */
+    display: block;
     color: #ccc;
   }
 
   .mobile-only-menu {
-    display: flex; /* Mobile par Terms, Privacy dikhenge */
+    display: flex;
   }
 }

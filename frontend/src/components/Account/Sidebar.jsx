@@ -14,7 +14,6 @@ import { logoutUser } from "../../features/userSlice";
 import { toast } from "react-toastify";
 import "./Sidebar.css";
 
-// CHANGE: Port 4000 rakha hai jaisa aapne bataya
 const SERVER_URL = "http://localhost:4000";
 const DEFAULT_AVATAR =
   "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
@@ -33,6 +32,8 @@ const Sidebar = () => {
     navigate("/login");
   };
 
+  const isAdmin = user && user.role === "admin";
+
   const menuItems = [
     { name: "Overview", path: "/account", icon: <LayoutDashboard size={20} /> },
     { name: "My Orders", path: "/orders", icon: <Package size={20} /> },
@@ -45,7 +46,6 @@ const Sidebar = () => {
     },
   ];
 
-  // --- FINAL CORRECT IMAGE LOGIC ---
   let avatarUrl = DEFAULT_AVATAR;
 
   if (user?.avatar) {
@@ -55,11 +55,7 @@ const Sidebar = () => {
       if (user.avatar.startsWith("http")) {
         avatarUrl = user.avatar;
       } else {
-        // SMART FIX: Filename ko clean karo
-        // Agar DB mein "uploads/image.png" hai, to sirf "image.png" nikaalo
         const filenameOnly = user.avatar.split(/[/\\]/).pop();
-
-        // Ab sahi URL banao
         avatarUrl = `${SERVER_URL}/uploads/users/${filenameOnly}`;
       }
     }
@@ -84,6 +80,22 @@ const Sidebar = () => {
       </div>
 
       <div className="sidebar-menu">
+        {/* Admin only dashboard shortcut */}
+        {isAdmin && (
+          <Link
+            to="/admin/dashboard"
+            className={`sidebar-link admin-dashboard-link ${isActive(
+              "/admin/dashboard"
+            )}`}
+          >
+            <div className="link-content">
+              <LayoutDashboard size={20} />
+              <span>Admin Dashboard</span>
+            </div>
+            <ChevronRight className="mobile-arrow" size={18} />
+          </Link>
+        )}
+
         {menuItems.map((item, index) => (
           <Link
             to={item.path}

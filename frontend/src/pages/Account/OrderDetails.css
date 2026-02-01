@@ -1,0 +1,247 @@
+/* PAGE WRAPPER – account page ki background jaisi */
+.od-page-wrapper {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+  font-family: "Ubuntu", sans-serif;
+}
+
+.od-main {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f0f0f0;
+  padding: 30px 32px;
+}
+
+/* HEADER */
+.od-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.od-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: 1px solid #eee;
+  background: #fafafa;
+  color: #333;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.od-heading-wrap {
+  margin-left: auto;
+  text-align: right;
+}
+
+.od-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: #222;
+}
+
+.od-id {
+  font-size: 13px;
+  color: #777;
+}
+
+/* GRID OF CARDS */
+.od-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.od-card {
+  background: #fdfdfd;
+  border-radius: 10px;
+  border: 1px solid #eee;
+  padding: 14px 16px;
+}
+
+.od-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.od-card-body p {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+.od-label {
+  font-weight: 600;
+  color: #555;
+}
+
+.od-value {
+  color: #333;
+}
+
+/* PAYMENT PILL */
+.od-pill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.od-pill-green {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+.od-pill-red {
+  background: #ffebee;
+  color: #c62828;
+}
+
+/* AMOUNT BREAKDOWN */
+.od-breakdown {
+  margin-top: 10px;
+  border-top: 1px solid #f1f1f1;
+  padding-top: 8px;
+  font-size: 13px;
+}
+
+.od-break-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  color: #555;
+}
+
+.od-break-total {
+  font-weight: 700;
+  color: #111;
+  margin-top: 2px;
+}
+
+/* ORDER STATUS */
+.od-status {
+  display: inline-flex;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.od-status-delivered {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+.od-status-shipped {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+.od-status-processing {
+  background: #fff8e1;
+  color: #f57c00;
+}
+
+/* ITEMS CARD */
+.od-items-card {
+  background: #fdfdfd;
+  border-radius: 10px;
+  border: 1px solid #eee;
+  padding: 16px 18px;
+}
+
+.od-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.od-item-row {
+  padding: 8px 0;
+  border-bottom: 1px solid #f2f2f2;
+}
+.od-item-row:last-child {
+  border-bottom: none;
+}
+
+.od-item-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.od-item-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.od-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.od-item-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #222;
+  text-decoration: none;
+}
+.od-item-name:hover {
+  text-decoration: underline;
+}
+
+.od-item-qty {
+  font-size: 13px;
+  color: #777;
+}
+
+.od-item-price-line {
+  font-size: 13px;
+  color: #333;
+}
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+  .od-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .od-page-wrapper {
+    margin: 20px auto;
+    padding: 0 10px;
+  }
+
+  .od-main {
+    padding: 18px 16px;
+    border-radius: 10px;
+  }
+
+  .od-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .od-heading-wrap {
+    margin-left: 0;
+    text-align: left;
+  }
+
+  .od-grid {
+    grid-template-columns: 1fr;
+  }
+}

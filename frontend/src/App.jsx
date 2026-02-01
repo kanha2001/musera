@@ -17,17 +17,14 @@ const ScrollToTop = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    // हर route change पर TOP पर scroll
     window.scrollTo({
       top: 0,
       left: 0,
-      behavior: "auto", // Instant scroll (no smooth animation)
+      behavior: "auto",
     });
-
-    // Multiple scroll targets for safety
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
-  }, [pathname]); // pathname change पर trigger
+  }, [pathname]);
 
   return null;
 };
@@ -69,21 +66,41 @@ import UpdateUser from "./pages/Admin/UpdateUser";
 import Store from "./pages/Store/Store";
 import CategoryPage from "./pages/Category/Category";
 
-// --- PROTECTED ROUTE (NO RELOAD LOOP) ---
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useSelector((state) => state.user);
+// 🔹 FOOTER DUMMY PAGES (NEW)
+import Newborn from "./pages/Footer/Shop/Newborn";
+import Baby from "./pages/Footer/Shop/Baby";
+import Toddler from "./pages/Footer/Shop/Toddler";
+import Kids from "./pages/Footer/Shop/Kids";
+import Sale from "./pages/Footer/Shop/Sale";
 
-  // 1. Agar login check chal raha hai aur hume pata hi nahi user kaun hai -> LOADER
+import TrackOrder from "./pages/Footer/Support/TrackOrder";
+import Returns from "./pages/Footer/Support/Returns";
+import ShippingInfo from "./pages/Footer/Support/ShippingInfo";
+import SizeGuide from "./pages/Footer/Support/SizeGuide";
+import ContactUs from "./pages/Footer/Support/ContactUs";
+
+import OurStory from "./pages/Footer/Company/OurStory";
+import Sustainability from "./pages/Footer/Company/Sustainability";
+import Careers from "./pages/Footer/Company/Careers";
+import Terms from "./pages/Footer/Company/Terms";
+import Privacy from "./pages/Footer/Company/Privacy";
+
+// --- PROTECTED ROUTE (NO RELOAD LOOP) ---
+const ProtectedRoute = ({ children, isAdmin }) => {
+  const { isAuthenticated, loading, user } = useSelector((state) => state.user);
+
   if (loading && isAuthenticated === false) {
     return <Loader />;
   }
 
-  // 2. Loading khatam hui aur user nahi mila -> LOGIN PE JAAO
   if (loading === false && isAuthenticated === false) {
     return <Navigate to="/login" />;
   }
 
-  // 3. User mil gaya -> PAGE DIKHAO
+  if (isAdmin && user && user.role !== "admin") {
+    return <Navigate to="/" />;
+  }
+
   return children;
 };
 
@@ -111,6 +128,7 @@ function App() {
       <SidebarMenu open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <Routes>
+        {/* PUBLIC */}
         <Route path="/" element={<Home />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/login" element={<Login />} />
@@ -121,7 +139,27 @@ function App() {
         <Route path="/store" element={<Store />} />
         <Route path="/category/:category" element={<CategoryPage />} />
 
-        {/* admin route  */}
+        {/* 🔹 FOOTER PUBLIC ROUTES (NEW) */}
+        {/* Shop column */}
+        <Route path="/newborn" element={<Newborn />} />
+        <Route path="/baby" element={<Baby />} />
+        <Route path="/toddler" element={<Toddler />} />
+        <Route path="/kids" element={<Kids />} />
+        <Route path="/sale" element={<Sale />} />
+        {/* Support column */}
+        <Route path="/track-order" element={<TrackOrder />} />
+        <Route path="/returns" element={<Returns />} />
+        <Route path="/shippinginfo" element={<ShippingInfo />} />
+        <Route path="/size-guide" element={<SizeGuide />} />
+        <Route path="/contact" element={<ContactUs />} />
+        {/* Company column */}
+        <Route path="/about" element={<OurStory />} />
+        <Route path="/sustainability" element={<Sustainability />} />
+        <Route path="/careers" element={<Careers />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<Privacy />} />
+
+        {/* ADMIN ROUTES */}
         <Route
           path="/admin/dashboard"
           element={

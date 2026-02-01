@@ -38,7 +38,6 @@ const Profile = () => {
       if (user.avatar.startsWith("http")) {
         avatarUrl = user.avatar;
       } else {
-        // SMART FIX: Filename clean karo
         const filenameOnly = user.avatar.split(/[/\\]/).pop();
         avatarUrl = `${SERVER_URL}/uploads/users/${filenameOnly}`;
       }

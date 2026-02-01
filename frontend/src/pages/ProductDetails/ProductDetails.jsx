@@ -1,3 +1,5 @@
+// src/components/Product/ProductDetails.jsx
+
 import React, { useState, useEffect } from "react";
 import "./ProductDetails.css";
 import { useSelector, useDispatch } from "react-redux";
@@ -8,28 +10,28 @@ import {
   clearErrors,
   resetReviewSuccess,
 } from "../../features/productSlice";
+import {
+  toggleWishlist,
+  getMyWishlist,
+  clearWishlistErrors,
+  clearWishlistMessage,
+} from "../../features/wishlistSlice";
 import { useParams, Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import {
-  Minus,
-  Plus,
-  Star,
-  Truck,
-  ChevronDown,
-} from "lucide-react";
+import { Minus, Plus, Star, Truck, ChevronDown, Heart } from "lucide-react";
 import { addItemToCart } from "../../features/cartSlice";
 
 const BACKEND_URL =
   import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
 
 const getImageUrl = (img) => {
-  if (!img || !img.url)
+  if (!img)
     return "https://via.placeholder.com/500x500?text=No+Image";
-  let finalUrl = img.url;
+  const finalUrl = typeof img === "string" ? img : img.url || img;
   if (typeof finalUrl === "string" && finalUrl.startsWith("/uploads")) {
     return `${BACKEND_URL}${finalUrl}`;
   }
-  return finalUrl;
+  return finalUrl || "https://via.placeholder.com/500x500?text=No+Image";
 };
 
 const ProductDetails = () => {
@@ -44,6 +46,12 @@ const ProductDetails = () => {
     products: allProducts,
   } = useSelector((state) => state.products);
 
+  const {
+    wishlistItems = [],
+    error: wishlistError,
+    message: wishlistMessage,
+  } = useSelector((state) => state.wishlist || {});
+
   const [activeImg, setActiveImg] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [activeColor, setActiveColor] = useState("");
@@ -53,52 +61,57 @@ const ProductDetails = () => {
   const [openSection, setOpenSection] = useState("desc");
   const [showFullTitle, setShowFullTitle] = useState(false);
 
-  // Load product + list
   useEffect(() => {
     if (id) {
       dispatch(getProductDetails(id));
       dispatch(getProducts());
+      dispatch(getMyWishlist());
     }
   }, [dispatch, id]);
 
-  // Derive local view state from product (no extra re-fetch)
-  useEffect(() => {
-    if (!product || !product._id) return;
-
-    if (product.images && product.images.length > 0) {
-      const firstValidImg = product.images.find((img) => img?.url);
-      if (firstValidImg) {
-        const url = getImageUrl(firstValidImg);
-        if (url !== activeImg) {
-          setActiveImg(url);
-        }
-      }
-    }
-
-    if (product.colors && product.colors.length > 0) {
-      if (!activeColor) {
-        setActiveColor(product.colors[0]);
-      }
-    }
-  }, [product, activeImg, activeColor]);
-
-  // Error + review success side-effects
   useEffect(() => {
     if (error) {
       toast.error(error);
       dispatch(clearErrors());
     }
-  }, [error, dispatch]);
+    if (wishlistError) {
+      toast.error(wishlistError);
+      dispatch(clearWishlistErrors());
+    }
+  }, [error, wishlistError, dispatch]);
+
+  useEffect(() => {
+    if (wishlistMessage) {
+      toast.success(wishlistMessage);
+      dispatch(clearWishlistMessage());
+      dispatch(getMyWishlist());
+    }
+  }, [wishlistMessage, dispatch]);
 
   useEffect(() => {
     if (success) {
       toast.success("Review Submitted Successfully!");
       dispatch(resetReviewSuccess());
-      // Sirf local form reset, koi extra fetch nahi
       setRating(0);
       setComment("");
     }
   }, [success, dispatch]);
+
+  useEffect(() => {
+    if (!product || !product._id) return;
+
+    if (product.images && product.images.length > 0) {
+      const firstValidImg = product.images.find((img) => img);
+      if (firstValidImg) {
+        const url = getImageUrl(firstValidImg);
+        setActiveImg(url);
+      }
+    }
+
+    if (product.colors && product.colors.length > 0) {
+      setActiveColor(product.colors[0]);
+    }
+  }, [product]);
 
   const getAvgRating = () => {
     if (!product.reviews || product.reviews.length === 0) return 0;
@@ -136,9 +149,10 @@ const ProductDetails = () => {
       return;
     }
 
-    const imageUrl = product.images?.[0]?.url
-      ? getImageUrl(product.images[0])
-      : "https://via.placeholder.com/200";
+    const imageUrl =
+      product.images && product.images[0]
+        ? getImageUrl(product.images[0])
+        : "https://via.placeholder.com/200";
 
     const cartData = {
       product: product._id,
@@ -186,6 +200,49 @@ const ProductDetails = () => {
     return availableStock < 1;
   };
 
+  const isInWishlist = (productId) => {
+    return (
+      Array.isArray(wishlistItems) &&
+      wishlistItems.some((item) => item?.product === productId)
+    );
+  };
+
+  const handleMainWishlist = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const firstImage =
+      product.images && product.images[0] ? product.images[0] : null;
+
+    dispatch(
+      toggleWishlist({
+        productId: product._id,
+        name: product.name,
+        price: product.price,
+        image: firstImage ? getImageUrl(firstImage) : "",
+      })
+    );
+  };
+
+  const handleRelatedWishlist = (e, relatedProduct) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const firstImage =
+      relatedProduct.images && relatedProduct.images[0]
+        ? relatedProduct.images[0]
+        : null;
+
+    dispatch(
+      toggleWishlist({
+        productId: relatedProduct._id,
+        name: relatedProduct.name,
+        price: relatedProduct.price,
+        image: firstImage ? getImageUrl(firstImage) : "",
+      })
+    );
+  };
+
   if (loading) return <div className="prd-loading">Loading...</div>;
   if (!product || !product._id)
     return <div className="prd-loading">Product Not Found</div>;
@@ -205,7 +262,7 @@ const ProductDetails = () => {
             </div>
             <div className="prd-thumb-row">
               {product.images
-                ?.filter((img) => img?.url && img.url.trim() !== "")
+                ?.filter((img) => img)
                 .slice(0, 4)
                 .map((img, i) => {
                   const url = getImageUrl(img);
@@ -220,22 +277,38 @@ const ProductDetails = () => {
                       <img src={url} alt="thumb" />
                     </button>
                   );
-                }) || null}
+                })}
             </div>
           </div>
 
           {/* RIGHT: Info Card + Ratings */}
           <div className="prd-col-right">
             <div className="prd-info-card">
-              <h1
-                className="prd-title"
-                onClick={() => setShowFullTitle(!showFullTitle)}
-                title={product.name}
-              >
-                {showFullTitle || product.name.length < 60
-                  ? product.name
-                  : product.name.slice(0, 60) + "..."}
-              </h1>
+              <div className="prd-header-row">
+                <h1
+                  className="prd-title"
+                  onClick={() => setShowFullTitle(!showFullTitle)}
+                  title={product.name}
+                >
+                  {showFullTitle || product.name.length < 60
+                    ? product.name
+                    : product.name.slice(0, 60) + "..."}
+                </h1>
+
+                <button
+                  className={`prd-main-heart ${
+                    isInWishlist(product._id) ? "active" : ""
+                  }`}
+                  onClick={handleMainWishlist}
+                >
+                  <Heart
+                    size={18}
+                    strokeWidth={0.9}
+                    fill={isInWishlist(product._id) ? "#e74c3c" : "none"}
+                    color="#111"
+                  />
+                </button>
+              </div>
 
               <div className="prd-rating-main">
                 <div className="prd-stars-main">
@@ -437,27 +510,55 @@ const ProductDetails = () => {
           )}
         </div>
 
-        {/* Related Products */}
+        {/* Related Products with wishlist */}
         {relatedProducts.length > 0 && (
           <div className="prd-related">
             <h3 className="prd-related-title">Related Products</h3>
             <div className="prd-related-grid">
-              {relatedProducts.map((item) => (
-                <Link
-                  to={`/product/${item._id}`}
-                  key={item._id}
-                  className="prd-related-card"
-                >
-                  <img
-                    src={
-                      item.images?.[0]?.url
-                        ? getImageUrl(item.images[0])
-                        : "https://via.placeholder.com/200"
-                    }
-                    alt={item.name}
-                  />
-                </Link>
-              ))}
+              {relatedProducts.map((item) => {
+                const imgUrl =
+                  item.images && item.images[0]
+                    ? getImageUrl(item.images[0])
+                    : "https://via.placeholder.com/200";
+                const fav = isInWishlist(item._id);
+
+                return (
+                  <div key={item._id} className="prd-related-card">
+                    <Link
+                      to={`/product/${item._id}`}
+                      className="prd-related-img-wrap"
+                    >
+                      <img src={imgUrl} alt={item.name} />
+                    </Link>
+
+                    <button
+                      className={`prd-related-heart ${fav ? "active" : ""}`}
+                      onClick={(e) => handleRelatedWishlist(e, item)}
+                    >
+                      <Heart
+                        size={15}
+                        strokeWidth={0.7}
+                        fill={fav ? "#e74c3c" : "none"}
+                        color="#111"
+                      />
+                    </button>
+
+                    <div className="prd-related-info">
+                      <Link
+                        to={`/product/${item._id}`}
+                        className="prd-related-name"
+                      >
+                        {item.name}
+                      </Link>
+                      <div className="prd-related-bottom">
+                        <span className="prd-related-price">
+                          ₹{item.price}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

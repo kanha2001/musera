@@ -75,9 +75,10 @@ const Success = () => {
           setStatus("failed");
         }
       } catch (error) {
-        console.error("Order Creation Failed:", error);
-        setStatus("failed");
-      }
+  console.error("Order Creation Failed:", error.response?.data || error.message);
+  setStatus("failed");
+}
+
     };
 
     createOrder();

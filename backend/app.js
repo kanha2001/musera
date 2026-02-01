@@ -19,6 +19,7 @@ app.use(
       process.env.FRONTEND_URL || "https://your-frontend.onrender.com",
       "http://localhost:5173",
       "http://localhost:3000",
+      "https://mussera-frontend.onrender.com",
     ],
     credentials: true,
   })

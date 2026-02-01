@@ -1,3 +1,4 @@
+// src/components/Sidebar/Sidebar.jsx
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -14,7 +15,7 @@ import { logoutUser } from "../../features/userSlice";
 import { toast } from "react-toastify";
 import "./Sidebar.css";
 
-const SERVER_URL = "http://localhost:4000";
+const SERVER_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
 const DEFAULT_AVATAR =
   "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
 
@@ -26,10 +27,14 @@ const Sidebar = () => {
 
   const isActive = (path) => (location.pathname === path ? "active" : "");
 
-  const handleLogout = () => {
-    dispatch(logoutUser());
-    toast.success("Logged out successfully");
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      await dispatch(logoutUser()).unwrap();
+      toast.success("Logged out successfully");
+      navigate("/login");
+    } catch (err) {
+      toast.error(err || "Logout failed");
+    }
   };
 
   const isAdmin = user && user.role === "admin";
@@ -80,7 +85,6 @@ const Sidebar = () => {
       </div>
 
       <div className="sidebar-menu">
-        {/* Admin only dashboard shortcut */}
         {isAdmin && (
           <Link
             to="/admin/dashboard"

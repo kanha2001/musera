@@ -61,9 +61,19 @@ export const loadUser = createAsyncThunk(
 );
 
 // 4. LOGOUT
-export const logoutUser = createAsyncThunk("user/logout", async () => {
-  await API.get("/api/v1/logout", getConfig());
-});
+export const logoutUser = createAsyncThunk(
+  "user/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      await API.get("/api/v1/logout", { withCredentials: true });
+      return true;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Logout Failed"
+      );
+    }
+  }
+);
 
 // 5. UPDATE PROFILE
 export const updateProfile = createAsyncThunk(
@@ -321,12 +331,21 @@ const userSlice = createSlice({
       })
 
       // LOGOUT
-      .addCase(logoutUser.fulfilled, (state) => {
-        state.loading = false;
-        state.isAuthenticated = false;
-        state.user = null;
-        localStorage.removeItem("user");
-      })
+      // LOGOUT
+.addCase(logoutUser.pending, (state) => {
+  state.loading = true;
+})
+.addCase(logoutUser.fulfilled, (state) => {
+  state.loading = false;
+  state.isAuthenticated = false;
+  state.user = null;
+  localStorage.removeItem("user");
+})
+.addCase(logoutUser.rejected, (state, action) => {
+  state.loading = false;
+  state.error = action.payload;
+});
+
 
       // UPDATE PROFILE
       .addCase(updateProfile.pending, (state) => {

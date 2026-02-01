@@ -1,4 +1,4 @@
-// frontend/src/pages/Order/ConfirmOrder.jsx
+// src/pages/Order/ConfirmOrder.jsx
 import React from "react";
 import "./ConfirmOrder.css";
 import { useSelector } from "react-redux";
@@ -24,6 +24,16 @@ const ConfirmOrder = () => {
 
   const proceedToPayment = async () => {
     try {
+      const orderInfo = {
+        cartItems,
+        shippingInfo,
+        subtotal,
+        shippingCharges,
+        tax,
+        totalPrice,
+      };
+      sessionStorage.setItem("orderInfo", JSON.stringify(orderInfo));
+
       const config = {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
@@ -82,7 +92,10 @@ const ConfirmOrder = () => {
               <p>Cart is Empty (Reloading...)</p>
             ) : (
               cartItems.map((item) => (
-                <div key={item.product} className="confirm-item-card">
+                <div
+                  key={`${item.product}-${item.size || "nosize"}`}
+                  className="confirm-item-card"
+                >
                   <img src={item.image} alt={item.name} />
                   <Link to={`/product/${item.product}`}>{item.name}</Link>
                   <span>

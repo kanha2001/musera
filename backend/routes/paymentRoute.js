@@ -5,8 +5,8 @@ const {
   sendStripeApiKey,
   paymentVerification,
 } = require("../controllers/paymentController");
-
 const { isAuthenticatedUser } = require("../middleware/auth");
+
 const router = express.Router();
 
 router

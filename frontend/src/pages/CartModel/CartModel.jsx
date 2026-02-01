@@ -1,3 +1,4 @@
+// components/Cart/CartModel.jsx
 import React from "react";
 import "./CartModel.css";
 import { useSelector, useDispatch } from "react-redux";
@@ -12,11 +13,7 @@ function CartModel({ open, onClose }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // 1. Get Cart Items
   const { cartItems } = useSelector((state) => state.cart);
-
-  // 2. Get Auth Status (User logged in hai ya nahi)
-  // Make sure your userSlice has 'isAuthenticated'
   const { isAuthenticated } = useSelector((state) => state.user);
 
   if (!open) return null;
@@ -26,31 +23,27 @@ function CartModel({ open, onClose }) {
     0
   );
 
-  const removeHandler = (id) => {
-    dispatch(removeItemFromCart(id));
+  const removeHandler = (id, size) => {
+    dispatch(removeItemFromCart({ productId: id, size }));
   };
 
-  const increaseQty = (id, qty, stock) => {
+  const increaseQty = (id, size, qty, stock) => {
     const newQty = qty + 1;
-    if (newQty > stock) return;
-    dispatch(updateCartItemQty({ productId: id, quantity: newQty }));
+    if (stock && newQty > stock) return;
+    dispatch(updateCartItemQty({ productId: id, size, quantity: newQty }));
   };
 
-  const decreaseQty = (id, qty) => {
+  const decreaseQty = (id, size, qty) => {
     const newQty = qty - 1;
     if (newQty < 1) return;
-    dispatch(updateCartItemQty({ productId: id, quantity: newQty }));
+    dispatch(updateCartItemQty({ productId: id, size, quantity: newQty }));
   };
 
-  // --- MAIN CHANGE HERE (Redirect Logic) ---
   const checkoutHandler = () => {
-    onClose(); // Close Modal
-
+    onClose();
     if (isAuthenticated) {
-      // If logged in -> Go to Shipping directly
       navigate("/shipping");
     } else {
-      // If NOT logged in -> Go to Login (with return path)
       navigate("/login?redirect=shipping");
     }
   };
@@ -75,7 +68,10 @@ function CartModel({ open, onClose }) {
           ) : (
             <div className="cart-items-list">
               {cartItems.map((item) => (
-                <div key={item.product} className="cart-item">
+                <div
+                  key={`${item.product}-${item.size}`}
+                  className="cart-item"
+                >
                   <div className="cart-item-img">
                     <img src={item.image} alt={item.name} />
                   </div>
@@ -88,13 +84,23 @@ function CartModel({ open, onClose }) {
                     >
                       {item.name}
                     </Link>
-                    <p className="cart-item-meta">Size: {item.size}</p>
+
+                    {/* ⭐ Size + stock text */}
+                    <p className="cart-item-meta">
+                      Size: {item.size}
+                      {item.stock !== undefined && (
+                        <span className="cart-item-stock">
+                          {" "}
+                          (In stock: {item.stock})
+                        </span>
+                      )}
+                    </p>
 
                     <div className="cart-item-row">
                       <div className="cart-qty-control">
                         <button
                           onClick={() =>
-                            decreaseQty(item.product, item.quantity)
+                            decreaseQty(item.product, item.size, item.quantity)
                           }
                         >
                           <Minus size={14} />
@@ -102,21 +108,26 @@ function CartModel({ open, onClose }) {
                         <span>{item.quantity}</span>
                         <button
                           onClick={() =>
-                            increaseQty(item.product, item.quantity, item.stock)
+                            increaseQty(
+                              item.product,
+                              item.size,
+                              item.quantity,
+                              item.stock
+                            )
                           }
                         >
                           <Plus size={14} />
                         </button>
                       </div>
                       <span className="cart-item-price">
-                        €{item.price * item.quantity}
+                        ₹{item.price * item.quantity}
                       </span>
                     </div>
                   </div>
 
                   <button
                     className="cart-remove-btn"
-                    onClick={() => removeHandler(item.product)}
+                    onClick={() => removeHandler(item.product, item.size)}
                   >
                     <Trash2 size={18} />
                   </button>
@@ -130,7 +141,7 @@ function CartModel({ open, onClose }) {
           <div className="cart-footer">
             <div className="cart-total-row">
               <span>Subtotal:</span>
-              <span>€{subtotal}</span>
+              <span>₹{subtotal}</span>
             </div>
             <button className="cart-shop-btn" onClick={checkoutHandler}>
               PROCEED TO CHECKOUT

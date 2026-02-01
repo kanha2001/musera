@@ -1,12 +1,10 @@
+// features/cartSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  // Cart Items load from Local Storage
   cartItems: localStorage.getItem("cartItems")
     ? JSON.parse(localStorage.getItem("cartItems"))
     : [],
-
-  // Shipping Info load from Local Storage (NEW)
   shippingInfo: localStorage.getItem("shippingInfo")
     ? JSON.parse(localStorage.getItem("shippingInfo"))
     : {},
@@ -16,52 +14,59 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    // 1. Add Item to Cart
+    // payload: {product, name, price, image, size, quantity, stock}
     addItemToCart: (state, action) => {
       const item = action.payload;
+
       const isItemExist = state.cartItems.find(
-        (i) => i.product === item.product
+        (i) => i.product === item.product && i.size === item.size
       );
 
       if (isItemExist) {
         state.cartItems = state.cartItems.map((i) =>
-          i.product === isItemExist.product ? item : i
+          i.product === item.product && i.size === item.size ? item : i
         );
       } else {
         state.cartItems.push(item);
       }
+
       localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
     },
 
-    // 2. Remove Item from Cart
+    // payload: { productId, size }
     removeItemFromCart: (state, action) => {
-      state.cartItems = state.cartItems.filter(
-        (i) => i.product !== action.payload
-      );
+      const { productId, size } = action.payload;
+
+      state.cartItems = state.cartItems.filter((i) => {
+        if (size) return !(i.product === productId && i.size === size);
+        return i.product !== productId;
+      });
+
       localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
     },
 
-    // 3. Update Quantity (Increase/Decrease)
+    // payload: { productId, size, quantity }
     updateCartItemQty: (state, action) => {
-      const { productId, quantity } = action.payload;
-      const item = state.cartItems.find((i) => i.product === productId);
+      const { productId, size, quantity } = action.payload;
+      const item = state.cartItems.find(
+        (i) => i.product === productId && i.size === size
+      );
 
       if (item) {
-        // Ensure qty is valid and within stock limits
-        if (quantity > 0 && quantity <= item.stock) {
+        // stock property frontend se aya hua hai
+        if (quantity > 0 && (!item.stock || quantity <= item.stock)) {
           item.quantity = quantity;
         }
       }
+
       localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
     },
 
-    // 4. Save Shipping Information (NEW)
     saveShippingInfo: (state, action) => {
       state.shippingInfo = action.payload;
       localStorage.setItem("shippingInfo", JSON.stringify(state.shippingInfo));
     },
 
-    // 5. Clear Cart
     clearCart: (state) => {
       state.cartItems = [];
       localStorage.removeItem("cartItems");
@@ -73,7 +78,7 @@ export const {
   addItemToCart,
   removeItemFromCart,
   updateCartItemQty,
-  saveShippingInfo, // <-- Yeh export zaroori hai Shipping Page ke liye
+  saveShippingInfo,
   clearCart,
 } = cartSlice.actions;
 

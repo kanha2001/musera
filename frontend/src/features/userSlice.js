@@ -1,5 +1,6 @@
+// src/features/userSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import API from "../api"; // <<--- NEW IMPORT
+import API from "../api";
 
 // --- HELPERS ---
 const getConfig = (isMultipart = false) => ({
@@ -147,7 +148,7 @@ export const resetPassword = createAsyncThunk(
   }
 );
 
-// 9. MY ORDERS (User specific)
+// 9. MY ORDERS
 export const myOrders = createAsyncThunk(
   "user/myOrders",
   async (_, { rejectWithValue }) => {
@@ -179,7 +180,7 @@ export const getOrderDetails = createAsyncThunk(
 
 // --- ADMIN ACTIONS ---
 
-// 11. GET ALL USERS (Admin)
+// 11. GET ALL USERS
 export const getAllUsers = createAsyncThunk(
   "user/getAllUsers",
   async (_, { rejectWithValue }) => {
@@ -187,12 +188,12 @@ export const getAllUsers = createAsyncThunk(
       const { data } = await API.get("/api/v1/admin/users", getConfig());
       return data.users;
     } catch (error) {
-      return rejectWithValue(error.response.data.message);
+      return rejectWithValue(error.response?.data?.message || "Fetch Failed");
     }
   }
 );
 
-// 12. DELETE USER (Admin)
+// 12. DELETE USER
 export const deleteUser = createAsyncThunk(
   "user/deleteUser",
   async (id, { rejectWithValue }) => {
@@ -203,12 +204,12 @@ export const deleteUser = createAsyncThunk(
       );
       return data;
     } catch (error) {
-      return rejectWithValue(error.response.data.message);
+      return rejectWithValue(error.response?.data?.message || "Delete Failed");
     }
   }
 );
 
-// 13. GET USER DETAILS (Admin - For Update Page)
+// 13. GET USER DETAILS (Admin)
 export const getUserDetails = createAsyncThunk(
   "admin/getUserDetails",
   async (id, { rejectWithValue }) => {
@@ -216,7 +217,7 @@ export const getUserDetails = createAsyncThunk(
       const { data } = await API.get(`/api/v1/admin/user/${id}`, getConfig());
       return data.user;
     } catch (error) {
-      return rejectWithValue(error.response.data.message);
+      return rejectWithValue(error.response?.data?.message || "Fetch Failed");
     }
   }
 );
@@ -241,14 +242,14 @@ export const updateUser = createAsyncThunk(
       );
       return data.success;
     } catch (error) {
-      return rejectWithValue(error.response.data.message);
+      return rejectWithValue(error.response?.data?.message || "Update Failed");
     }
   }
 );
 
 // ---------------- SLICES ----------------
 
-// 1. MAIN USER SLICE (Auth & Basic)
+// 1. MAIN USER SLICE
 const userSlice = createSlice({
   name: "user",
   initialState: {
@@ -331,21 +332,19 @@ const userSlice = createSlice({
       })
 
       // LOGOUT
-      // LOGOUT
-.addCase(logoutUser.pending, (state) => {
-  state.loading = true;
-})
-.addCase(logoutUser.fulfilled, (state) => {
-  state.loading = false;
-  state.isAuthenticated = false;
-  state.user = null;
-  localStorage.removeItem("user");
-})
-.addCase(logoutUser.rejected, (state, action) => {
-  state.loading = false;
-  state.error = action.payload;
-});
-
+      .addCase(logoutUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.loading = false;
+        state.isAuthenticated = false;
+        state.user = null;
+        localStorage.removeItem("user");
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
 
       // UPDATE PROFILE
       .addCase(updateProfile.pending, (state) => {
@@ -388,6 +387,7 @@ const userSlice = createSlice({
         state.error = action.payload;
       })
 
+      // ORDER DETAILS
       .addCase(getOrderDetails.pending, (state) => {
         state.loading = true;
       })
@@ -509,14 +509,13 @@ const userDetailsSlice = createSlice({
   },
 });
 
-// EXPORTS
+// EXPORT ACTIONS
 export const { clearErrors, clearMessage, resetUpdate } = userSlice.actions;
 export const { resetProfile } = profileSlice.actions;
 export const { clearErrors: clearAllUsersErrors } = allUsersSlice.actions;
-export const { clearErrors: clearUserDetailsErrors } =
-  userDetailsSlice.actions;
+export const { clearErrors: clearUserDetailsErrors } = userDetailsSlice.actions;
 
-// Reducers Export
+// EXPORT REDUCERS
 export const userReducer = userSlice.reducer;
 export const profileReducer = profileSlice.reducer;
 export const allUsersReducer = allUsersSlice.reducer;

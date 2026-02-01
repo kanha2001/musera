@@ -1,3 +1,4 @@
+// src/components/layout/SidebarMenu/SidebarMenu.jsx
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -10,10 +11,16 @@ import {
   Twitter,
   Linkedin,
 } from "lucide-react";
+import { useSelector } from "react-redux";
 import "./SidebarMenu.css";
 
-function SidebarMenu({ open, onClose, userName = "John" }) {
+function SidebarMenu({ open, onClose }) {
   const [openMenu, setOpenMenu] = useState(null);
+
+  // ✅ Redux se user
+  const { user, isAuthenticated } = useSelector((state) => state.user);
+
+  const userName = isAuthenticated && user?.name ? user.name : "Guest";
 
   const toggleMenu = (key) => {
     setOpenMenu((prev) => (prev === key ? null : key));
@@ -37,9 +44,10 @@ function SidebarMenu({ open, onClose, userName = "John" }) {
           </button>
         </div>
 
+        {/* ...baaki code same rakho (menu, social icons etc.) */}
+        {/* ↓ yahan se tumhara original nav/social code without changes */}
         {/* 🔥 SINGLE /store WITH FILTERS */}
         <nav className="ms-side-menu">
-          {/* 🔥 FILTERS */}
           <Link
             to="/store?filter=latest"
             className="ms-menu-link-wrapper"
@@ -56,7 +64,6 @@ function SidebarMenu({ open, onClose, userName = "John" }) {
             <button className="ms-menu-item">BESTSELLERS</button>
           </Link>
 
-          {/* 🔥 ALL PRODUCTS - SHOP PAGE */}
           <Link to="/shop" className="ms-menu-link-wrapper" onClick={onClose}>
             <button className="ms-menu-item">ALL PRODUCTS</button>
           </Link>
@@ -69,61 +76,6 @@ function SidebarMenu({ open, onClose, userName = "John" }) {
             <button className="ms-menu-item">SALE</button>
           </Link>
 
-          {/* <Link
-            to="/store?filter=deal"
-            className="ms-menu-link-wrapper"
-            onClick={onClose}
-          >
-            <button className="ms-menu-item">DEAL OF THE DAY</button>
-          </Link> */}
-
-          {/* 🔥 CATEGORY SUBMENU - SAME AS BEFORE */}
-          {/* <div className="ms-menu-group">
-            <button
-              className="ms-menu-item has-arrow"
-              onClick={() => toggleMenu("shop")}
-            >
-              <span>SHOP</span>
-              <span className={openMenu === "shop" ? "arrow up" : "arrow"}>
-                <ChevronDown size={20} />
-              </span>
-            </button>
-
-            {openMenu === "shop" && (
-              <div className="ms-submenu">
-                <Link
-                  to="/store?category=tshirts"
-                  className="ms-sub-link-wrapper"
-                  onClick={onClose}
-                >
-                  <button className="ms-sub-item">T‑Shirts</button>
-                </Link>
-                <Link
-                  to="/store?category=shirts"
-                  className="ms-sub-link-wrapper"
-                  onClick={onClose}
-                >
-                  <button className="ms-sub-item">Shirts</button>
-                </Link>
-                <Link
-                  to="/store?category=trousers"
-                  className="ms-sub-link-wrapper"
-                  onClick={onClose}
-                >
-                  <button className="ms-sub-item">Trousers</button>
-                </Link>
-                <Link
-                  to="/store?category=jeans"
-                  className="ms-sub-link-wrapper"
-                  onClick={onClose}
-                >
-                  <button className="ms-sub-item">Jeans</button>
-                </Link>
-              </div>
-            )}
-          </div> */}
-
-          {/* MY ACCOUNT  */}
           <Link
             to="/account"
             className="ms-menu-link-wrapper"
@@ -132,14 +84,17 @@ function SidebarMenu({ open, onClose, userName = "John" }) {
             <button className="ms-menu-item">MY ACCOUNT</button>
           </Link>
 
-          {/* 🔥 ORDERS */}
-          <Link to="/orders" className="ms-menu-link-wrapper" onClick={onClose}>
+          <Link
+            to="/orders"
+            className="ms-menu-link-wrapper"
+            onClick={onClose}
+          >
             <button className="ms-menu-item">ORDERS</button>
           </Link>
         </nav>
 
-        {/* SOCIAL ICONS */}
         <div className="ms-side-social">
+          {/* social links same */}
           <a
             href="https://instagram.com"
             target="_blank"

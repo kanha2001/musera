@@ -61,9 +61,12 @@ function CartModel({ open, onClose }) {
           {cartItems.length === 0 ? (
             <div className="cart-empty-state">
               <p className="cart-empty-text">No items found.</p>
-              <button className="cart-shop-btn-outline" onClick={onClose}>
+              {/* <button className="cart-shop-btn-outline" onClick={onClose}>
                 Continue Shopping
-              </button>
+              </button> */}
+              <Link to="/shop" className="cart-shop-btn-outline"  onClick={onClose}>
+            Continue Shopping
+          </Link>
             </div>
           ) : (
             <div className="cart-items-list">
